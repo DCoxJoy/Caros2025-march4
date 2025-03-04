@@ -1,0 +1,43 @@
+<div class="product_details">
+    <div class="product_details_inner">
+      
+        <div class="product_desc_image">
+            <img class="lazyload"
+                data-sizes="auto"
+                src="{{cdn 'img/loading.svg'}}"
+                data-src="{{getImage product.images.1. 'product_size' (cdn theme_settings.default_image_product)}}"
+                alt="{{product.images.1.alt}}" title="{{product.images.1.alt}}" data-main-image>
+        </div>
+
+        <div class="product_desc_content">
+ 
+
+            <div class="short-description"> 
+                {{#eachIndex (split product.description '&lt;!-- split --&gt;')}}
+                {{#if index '==' '0' }}
+                {{{item}}}
+                {{/if}}
+                {{/eachIndex}}
+            </div>
+        
+            <div class="web-description">
+                {{#eachIndex (split product.description '&lt;!-- split --&gt;')}}
+                {{#if index '==' '1' }}
+                {{{item}}}
+                {{/if}}
+                {{/eachIndex}}
+            </div>
+        
+            <div class="web-description">
+                {{#eachIndex (split product.description '&lt;!-- split --&gt;')}}
+                {{#if index '==' '2' }}
+                {{{item}}}
+                {{/if}}
+                {{/eachIndex}}
+            </div>
+    
+            <!-- <div class="datasheet-app"></div> -->
+        </div>
+    </div> 
+  </div>
+  

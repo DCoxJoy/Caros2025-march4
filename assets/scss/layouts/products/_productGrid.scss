@@ -1,0 +1,400 @@
+// =============================================================================
+// PRODUCT GRID (CSS)
+// =============================================================================
+
+
+// Product grid view
+// -----------------------------------------------------------------------------
+//
+// 1. Re-set the font-size, as we're reducing it to 0 in the .products class.
+//
+// -----------------------------------------------------------------------------
+
+.productGrid {
+    list-style: none;
+    margin: 0 -8px;
+    max-width: none;
+    width: auto;
+    font-size: 0;
+    margin-bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    .card .card-actions {
+        display: none;
+    }
+    .product {
+        @include grid-column(6, $float: none);
+        display: inline-block;
+        font-size: fontSize("base");
+        vertical-align: top;
+        padding-left: 8px;
+        padding-right: 8px;
+
+        
+    }
+    &.style-2 {
+        margin: 0 -8px;
+        .product {
+            padding-left: 8px;
+            padding-right: 8px;
+            .card {
+                margin-bottom: 16px;
+            }
+            .card-body {
+                padding: 20px 0 0 0;
+            }
+            .card-figure {
+                border-radius: 3px;
+                overflow: hidden;
+            }
+            .themevale_badges {
+                top: 6px;
+                right: 6px;
+            }
+        }
+    }
+    &.slick-slider {
+        .card {
+            margin-bottom: 0;
+        }
+    }
+    @media (min-width: 375px) {
+        &.style-2 {
+            .product {
+                .card {
+                    overflow: hidden;
+                    border-radius: 5px;
+                    margin-bottom: 16px;
+                    background-color: #ffffff;
+                    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.05)
+                }
+                .card-body {
+                    padding: 20px 15px 0 15px;
+                }
+                .card-figcaption-button {
+                    margin-left: -15px;
+                    margin-right: -15px;
+                    width: auto;
+                    display: block;
+                    border: none;
+                    border-radius: 0 0 5px 5px;
+                    border-top: 1px solid #ebecef;
+                    box-shadow: none;
+                }
+            }
+        }
+    }
+    @include breakpoint("small") {
+        .product {
+            width: grid-calc(4, $total-columns);
+        }
+    }
+    @media (min-width: 993px) {
+        .product {
+            width: grid-calc(3, $total-columns);
+        }
+    }
+    @media (min-width: 1025px) {
+        margin: 0 -15px;
+        .product {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
+}
+
+// Product grid view variation
+// -----------------------------------------------------------------------------
+
+.productGrid--maxCol6 {
+    .product {
+        @media (min-width: 1025px) {
+            width: 20%;
+        }
+        @media (min-width: 1281px) {
+            width: grid-calc(2, $total-columns);
+        }
+    }
+}
+
+.productGrid--maxCol5 {
+    .product {
+        @media (min-width: 1025px) {
+            width: 20%;
+        }
+    }
+}
+
+.productGrid--maxCol4 {
+    .product {
+        @media (min-width: 993px) {
+            width: grid-calc(3, $total-columns);
+        }
+    }
+}
+
+.productGrid--maxCol3 {
+    .product {
+        .card-detail {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            .card-title{
+                // display: -webkit-box;
+                // -webkit-line-clamp: 1;
+                // text-overflow: ellipsis;
+                // overflow: hidden;
+            }
+        }
+        @include breakpoint("small") {  
+            width: grid-calc(4, $total-columns);
+        }
+    }
+}
+
+.productGrid--maxCol2 {
+    .product {
+        width: grid-calc(6, $total-columns);
+    }
+}
+
+.productGrid--maxCol1 {
+    .themevale_categoryToolbar{
+        margin-bottom: 20px;
+    }
+    .productGrid{
+        .product {
+            width: 100%;
+            float: none;
+            
+            .card {
+                padding: 30px 0;
+                // margin-bottom: 30px;
+                border-bottom: 1px solid #e6e6e6;
+                background: #ffffff;
+                border-radius: 0;
+                align-items: center;
+                &:first-child{
+                    padding-top: 15px;
+                }
+            }
+            &:last-child {
+                .card {
+                    margin-bottom: 10px;
+                }
+            }
+            
+        }
+    }
+    
+    .productGrid .card {
+        width: 100%;
+        display: block;
+        .card-figure,
+        .card-body {
+            display: block;
+        }
+        .card-figure{
+            background: #F5F3F4;
+            width: 282px;
+            height: 300px;
+            border-radius: 10px;
+            align-content: center;
+        }
+        .card-body {
+            font-size: 0;
+            padding-top: 15px;
+            padding-left: 0;
+            text-align: left;
+            .card-desciption {
+                display: block;
+                p {
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 3;
+                    text-overflow: ellipsis;
+                    -webkit-box-orient: vertical;
+                }
+            }
+            .card-detail .card-figcaption {
+                text-align: left;
+                display: none;
+                .card-figcaption-button {
+                    text-align: center;
+                    display: inline-block;
+                    width: auto;
+                    min-width: 200px;
+                }
+            }
+        }
+        .card-detail {
+            display: block;
+            font-size: 12px;
+            padding-right: 0;
+            .card-title{
+                text-align: left;
+                margin-bottom: 20px;
+                // -webkit-line-clamp: 2;
+                // text-overflow: ellipsis;
+            }
+            .card-wrapper{
+                justify-content: left;
+            }
+        }
+        .card-actions {
+            font-size: 12px;
+            display: block;
+            @media (max-width: 800px) {
+                display: flex;
+                gap: 20px;
+            }
+            // .card-figcaption .button {
+            //     color: stencilColor('card-figcaption-button-color');
+            //     border-color: stencilColor('card-figcaption-button-border');
+            //     background-color: stencilColor('card-figcaption-button-background');
+            //     box-shadow: 0 0 3px 1px rgba(0,0,0,0.05);
+            //     &:hover,
+            //     &:focus,
+            //     &:active {
+            //         color: stencilColor('card-figcaption-button-colorHover');
+            //         border-color: stencilColor('card-figcaption-button-borderHover');
+            //         background-color: stencilColor('card-figcaption-button-backgroundHover');
+            //     }
+            // }
+            .form-wishlist{
+                display: none;
+            }
+            .contact-sales{ 
+                a{
+                background:#ffffff ;
+                color: #DB0032;
+                &:hover{
+                    background:#DB0032 ;
+                color: #ffffff;
+                img{
+                    filter: invert(53%) sepia(55%) saturate(2119%) hue-rotate(232deg) brightness(155%) contrast(163%);
+                }
+                }
+                }
+            }
+        }
+    }
+    @include breakpoint("small") {
+        .productGrid .card {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            flex-direction: row;
+            .card-figure,
+            .card-body {
+                display: inline-block;
+                vertical-align: top;
+            }
+            // .card-figure {
+            //     width: 180px;
+            // }
+            .card-body {
+                padding-top: 0;
+                padding-left: 30px;
+                width: calc(100% - 180px);
+            }
+            .card-actions {
+                font-size: 12px;
+                // display: block;  
+                .card-figcaption {
+                    max-width: 200px;
+                }
+            }
+        }
+    }
+    @include breakpoint("medium") {
+        .productGrid .card {
+            .card-figure {
+               width: 280px;
+            }
+            .card-body {
+                padding-left: 30px;
+                width: calc(100% - 280px);
+            }
+            .card-detail {
+                display: inline-block;
+                vertical-align: top;
+                // width: calc(100% - 210px);
+                padding-right: 30px;
+                .card-wishlist, .card-figcaption {
+                    display: none;
+                }
+            }
+            .card-actions {
+                display: flex;
+                vertical-align: top;
+                // width: 210px;
+                text-align: center;
+                gap: 20px;
+                .card-figcaption {
+                    margin-top: 0;
+                    margin-bottom: 15px;
+                    .card-figcaption-button {
+                        width: 100%;
+                    }
+                }
+                .card-compare {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+        }
+    }
+    @media (min-width: 1025px) {
+        .product {
+            .card {
+                // padding-bottom: 45px;
+                // margin-bottom: 45px;
+            }
+            &:last-child {
+                .card {
+                    margin-bottom: 20px;
+                }
+            }
+        }
+        .productGrid .card {
+            .card-compare {
+                position: absolute;
+                right: 70px;
+                top: 125px;
+            }
+        }
+    }
+}
+
+
+//
+// Product Grid with masonry layout
+//
+// Purpose: Display products in a masonry grid, with a display inline-block for
+// older browsers that don't support css multicolumn
+//
+// -----------------------------------------------------------------------------
+.productGrid--maxCol1{
+    .card-img-container {
+        height: 260px !important;
+        width: 242px;
+        .card-image{
+            height: 260px;
+            width: 242px;
+        }
+        @media (max-width: 800px) {
+            width: 212px;
+        }
+        .product-additional{
+            img{
+                height: 260px;
+            width: 242px;
+            }
+            
+        }
+        @media (max-width: 800px) {
+            width: 212px;
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{{#if product.related_products}}
+    <div class="custom-joy-related-slider-main">
+        <div class="container"> 
+            <div class="toggle productRelated" id="product-related" data-product-related>
+                <div class="toggle-title section-title">
+                    <h4 class="page-heading">{{lang 'products.related_products'}}</h4>
+                </div>
+                <div class="toggle-content is-open" id="productRelated-content" aria-hidden="false">  
+                    {{> components/custom-joy/products/related-product-slider products=product.related_products theme_settings=theme_settings}}
+                </div>
+            </div>
+        </div>
+    </div>
+{{/if}}
+

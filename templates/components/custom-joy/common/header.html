@@ -1,0 +1,203 @@
+
+<div class="announcement-bar">
+    {{#if theme_settings.themevale_header-layout-1}}
+    <div class="container navUser">
+        <ul class="navUser-left navUser-section"> 
+            {{#if currency_selector.currencies.length '>' 1}}
+                <li class="navUser-item">
+                    {{> components/common/currency-selector}}
+                </li>
+            {{/if}}
+            <li class="navUser-item">
+                <span class="navUser-text">{{theme_settings.themevale_header-top-content}}</span>
+            </li>
+        </ul>
+        
+    </div>
+    {{/if}}
+</div>
+<div class="top_header_joy">
+    {{> components/custom-joy/common/header/header-top}}
+</div>
+
+<header class="joy-header">
+    <div class="container">
+        <div class="joy-header-inner">
+            <div class="joy-header-logo-menu">
+                <div class="joy-header-logo">
+                    <a href="https://thejoyfactory.com/">
+                        {{#if settings.store_logo.image}}
+                            {{#if theme_settings.logo_size '===' 'original'}}
+                                <img class="header-logo-image-unknown-size" src="{{getImage settings.store_logo.image 'logo_size'}}" alt="{{settings.store_logo.title}}" title="{{settings.store_logo.title}}">
+                            {{else}}
+                                <span class="header-logo-image-container">
+                                    <img class="header-logo-image" src="{{getImage settings.store_logo.image 'logo_size'}}" alt="{{settings.store_logo.title}}" title="{{settings.store_logo.title}}">
+                                </span>
+                            {{/if}}
+                        {{else}}
+                            <img src="{{cdn 'img/header-logo-joy.webp'}}" alt="Header Logo Image">
+                        {{/if}}
+                    </a>
+                </div> 
+                <div class="mobile-icon">
+                    <div class=" mobile-search-bar">
+                        <div class="joy-header-btn">
+                            <div class="search-icon search-popup">
+                                <span class="search-img"></span>
+                            </div>
+                            <!-- New Search Popup -->
+                            <div class="search-popup-wrapper" id="searchPopup">
+                                <div class="search-popup-content">
+                                    
+                                    <div class="navUser-item navUser-item--quickSearch item--quickSearch">
+                                        <div class="themevale_search-custom layout-2" id="quickSearch2" aria-hidden="true" tabindex="-1" data-prevent-quick-search-close>
+                                            {{> components/themevale/header/quick-search-all}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="joy-header-btn joy-cart-btn">
+                        <!-- <a href="/all-products" class="custom-joy-btn dark-button">Shop <span> &nbsp;Online</span></a> -->
+                         <!-- <div class="custom-joy-btn dark-button">
+                            <img src="{{cdn 'img/cart.svg'}}" alt="{{settings.store_logo.title}}" class="" title="{{settings.store_logo.title}}">
+                         </div> -->
+                         <div class="header-Mobile-item text-right joy-cart-btn">
+                            <div class="custom-joy-btn dark-button items item--cart themevale_cart">
+                                <a class="navUser-action cartMobile"
+                                    data-cart-preview
+                                    href="{{urls.cart}}">
+                                    <div class="navUser-icon navUser-item-cartIcon">
+                                        <svg class="icon"><use xlink:href="#icon-cart"></use></svg>
+                                        <span class="countPill{{#if cart.items}} countPill--positive{{/if}} cart-quantity">{{#if cart.items}}{{cart.quantity}}{{else}}0{{/if}}</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="themevale_Mobile themevale_MobileCart" id="cart-mobile">
+                                    
+                                <div class="themevale_close2">
+                                    <a href="javascript:void(0)" class="close">
+                                        <svg class="icon"><use xlink:href="#times"/></svg>
+                                    </a>
+                                </div>
+                                <div id="cartMobile">
+                                    <!-- <p class="navPage-subMenu-title">
+                                        <span class="text">{{lang 'cart.title'}}</span>
+                                    </p> -->
+                                    <div class="dropdown-cart" id="cart-preview-dropdown-3" aria-hidden="true"></div>
+                                </div>
+                            
+                            </div>
+                        </div>  
+                    </div>
+                    <a href="javascript:void(0)" class="hemburg-menu"><span></span></a> 
+                </div>
+                <div id="joy-header-menu-btn" class="joy-header-menu-btn">
+                    <span class="close-icon"></span>
+                    <a href="{{urls.home}}" class="white-logo">
+                        {{#if settings.store_logo.image}}
+                            {{#if theme_settings.logo_size '===' 'original'}}
+                                <img class="header-logo-image-unknown-size" src="{{getImage settings.store_logo.image 'logo_size'}}" alt="{{settings.store_logo.title}}" title="{{settings.store_logo.title}}">
+                            {{else}}
+                                <span class="header-logo-image-container">
+                                    <img class="header-logo-image" src="{{getImage settings.store_logo.image 'logo_size'}}" alt="{{settings.store_logo.title}}" title="{{settings.store_logo.title}}">
+                                </span>
+                            {{/if}}
+                        {{else}}
+                            <img src="{{cdn 'img/mobile-menu-logo.png'}}" alt="Header Logo Image">
+                        {{/if}}
+                    </a>
+                    <div class="joy-header-menu">
+                        <ul id="header-menu-items" class="header-menu-items" role="menu">
+                            <li class="header-menu-item">
+                                <span class="header-menu-item-link">Products</span>
+                                {{> components/custom-joy/common/header/products-menu}}
+                            </li>
+                            <li class="header-menu-item">
+                                <a href="https://thejoyfactory.com/brands/" class="header-menu-item-link">Brands</a>
+                                {{> components/custom-joy/common/header/brands-menu}}
+                            </li>
+                            <li class="header-menu-item">
+                                <a href="https://thejoyfactory.com/verticals/" class="header-menu-item-link col5">Verticals</a>
+                                {{> components/custom-joy/common/header/verticals-menu}}
+                            </li>
+                            <li class="header-menu-item">
+                                <span class="header-menu-item-link">Company</span>
+                                {{> components/custom-joy/common/header/company-menu}}
+                            </li>
+                            <li class="header-menu-item">
+                                <a href="https://thejoyfactory.com/resources/" class="header-menu-item-link">Resources</a>
+                                {{> components/custom-joy/common/header/resources-menu}}
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="joy-header-buttons">
+                        <div class="joy-header-btn desktop-search-bar">
+                            <div class="search-icon search-popup">
+                                <span class="search-img"></span>
+                            </div>
+                            <!-- New Search Popup -->
+                            <div class="search-popup-wrapper" id="searchPopup">
+                                <div class="container">
+                                    <div class="search-popup-content">
+                                    
+                                        <div class="navUser-item navUser-item--quickSearch item--quickSearch">
+                                            <div class="themevale_search-custom layout-2" id="quickSearch2" aria-hidden="true" tabindex="-1" data-prevent-quick-search-close>
+                                                {{> components/themevale/header/quick-search-all}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
+                        <div class="joy-header-btn">
+                            <a href="https://thejoyfactory.com/contact-sales/" class="custom-joy-btn">Contact Sales</a>
+                        </div>
+                        <div class="joy-header-btn joy-cart-btn">
+                            <!-- <a href="/all-products" class="custom-joy-btn dark-button">Shop <span> &nbsp;Online</span></a> -->
+                             <!-- <div class="custom-joy-btn dark-button">
+                                <img src="{{cdn 'img/cart.svg'}}" alt="{{settings.store_logo.title}}" class="" title="{{settings.store_logo.title}}">
+                             </div> -->
+                            <div class="header-Mobile-item text-right joy-cart-btn">
+                                <div class="custom-joy-btn dark-button items item--cart themevale_cart">
+                                    <a class="navUser-action cartMobile"
+                                        data-cart-preview
+                                        href="{{urls.cart}}">
+                                        <div class="navUser-icon navUser-item-cartIcon">
+                                            <svg class="icon"><use xlink:href="#icon-cart"></use></svg>
+                                            <span class="countPill{{#if cart.items}} countPill--positive{{/if}} cart-quantity">{{#if cart.items}}{{cart.quantity}}{{else}}0{{/if}}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="themevale_Mobile themevale_MobileCart" id="cart-mobile">
+                                    <div class="cart-wrapper">
+                                        <div class="themevale_close2">
+                                            <a href="javascript:void(0)" class="close">
+                                                <svg class="icon"><use xlink:href="#times"/></svg>
+                                            </a>
+                                        </div>
+                                        <div id="cartMobile">
+                                            <!-- <p class="navPage-subMenu-title">
+                                                <span class="text">{{lang 'cart.title'}}</span>
+                                            </p> -->
+                                            <div class="dropdown-cart" id="cart-preview-dropdown-3" aria-hidden="true"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                        </div>
+                        
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+
+    
+</header>
+
+
+
+

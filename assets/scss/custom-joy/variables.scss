@@ -1,0 +1,60 @@
+$body_font: "Poppins", sans-serif;
+$primary_color: #DB0032;
+$primary_dark_color: #83001E;
+$gray_dark_color: #D3D3D3;
+$gray_color: #F5F3F4;
+$white_color: #FFFFFF;
+$secondary_color: #000000;
+$text_color: #333;
+
+
+@mixin media($device) {
+    @if $device == 'laptop' {
+        @media (max-width: 1279px) {
+            @content;
+        }
+    } @else if $device == 'ipad' {
+        @media (max-width: 1023px) {
+            @content;
+        }
+    } @else if $device == 'ipad-m' {
+        @media (max-width: 991px) {
+            @content;
+        }
+    } @else if $device == 'mobile' {
+        @media (max-width: 767px) {
+            @content;
+        }
+    } @else if $device == 'xs-mobile' {
+        @media (max-width: 479px) {
+            @content;
+        }
+    }
+}
+
+
+@mixin full-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin display-flex {
+    display: flex;
+}
+
+@mixin flex-direction($direction) {
+    flex-direction: $direction;
+}
+
+@mixin flex-wrap($wrap) {
+    flex-wrap: $wrap; 
+}
+
+@mixin justify-content($value) {
+    justify-content: $value; 
+}
+
+@mixin align-items($value) {
+    align-items: $value;
+}

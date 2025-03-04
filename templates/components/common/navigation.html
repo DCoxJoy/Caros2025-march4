@@ -1,0 +1,49 @@
+{{#if theme_settings.themevale_header-layout-1}}
+<div class="container navUser">
+    <ul class="navUser-left navUser-section"> 
+        {{#if currency_selector.currencies.length '>' 1}}
+            <li class="navUser-item">
+                {{> components/common/currency-selector}}
+            </li>
+        {{/if}}
+        <li class="navUser-item">
+            <span class="navUser-text">{{theme_settings.themevale_header-top-content}}</span>
+        </li>
+    </ul>
+    <ul class="navUser-right navUser-section">
+        <li class="navUser-item">
+            <a class="navUser-action" href="/contact-us/">{{lang 'common.need_help'}}</a>
+        </li>
+        <li class="navUser-item">
+            <a class="navUser-action" href="/faqs/">{{lang 'common.faq'}}</a>
+        </li>
+        <li class="navUser-item">
+            <a class="navUser-action" href="/blog/">{{lang 'common.blog'}}</a>
+        </li>
+        {{#if settings.gift_certificates_enabled}}
+            <li class="navUser-item">
+                <a class="navUser-action" href="{{urls.gift_certificate.purchase}}">{{lang 'common.gift_cert'}}</a>
+            </li>
+        {{/if}}
+        <li class="navUser-item navUser-item--compare show">
+            <a class="navUser-action" href="{{urls.compare}}" data-compare-nav>{{lang 'common.compare'}} (<span class="countPill">0</span>)</a>
+        </li>
+        <li class="navUser-item navUser-item--account">
+            <i class="icon" aria-hidden="true"><svg><use xlink:href="#icon-user" /></svg></i>
+            {{#if customer}}
+                <a class="navUser-action" href="{{urls.account.index}}"><strong>{{customer.name}}.</strong></a>
+                <a class="navUser-action" href="{{urls.auth.logout}}">{{lang 'common.logout'}}</a>
+            {{else}}
+                <a class="navUser-action" href="javascript:void(0)" data-login-form>{{lang 'common.login'}}</a>
+                {{#if settings.account_creation_enabled}}
+                <span class="navUser-or">{{lang 'common.or'}}</span>
+                <a class="navUser-action" href="{{urls.auth.create_account}}">{{lang 'common.create_account'}}</a>
+                {{/if}}
+                {{#if page_type '!==' 'login'}}
+                    {{> components/themevale/header/login-form}}
+                {{/if}}
+            {{/if}}
+        </li>
+    </ul>
+</div>
+{{/if}}

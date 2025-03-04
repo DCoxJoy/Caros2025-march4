@@ -1,0 +1,56 @@
+{{#if items}}
+    {{#or ( if title '==' 'Brand') ( if title '==' 'Device Type' ) ( if title '==' 'Industry')}} 
+    <div class="accordion-block sidebarBlock">
+        <div
+            class="accordion-navigation toggleLink"
+            role="button"
+            data-collapsible="#facetedSearch-content--{{hyphenate facet }}"
+            aria-controls="facetedSearch-content--{{hyphenate facet }}"
+            aria-expanded="false">
+            <h5 class="sidebarBlock-heading">
+                {{{title}}}
+            </h5>
+
+            <div class="accordion-navigation-actions">
+                {{#if selected}}
+                    <a href="{{ remove_url }}" class="facetedSearch-clearLink" data-faceted-search-facet>{{lang 'search.faceted.clear'}}</a>
+                {{/if}}
+                <img src="{{cdn 'assets/img/open.svg'}}" class="icon accordion-indicator toggleLink-text toggleLink-text--off" alt="Open Icon" />
+                <img src="{{cdn 'assets/img/close.svg'}}" class="icon accordion-indicator toggleLink-text toggleLink-text--on" alt="Close Icon" />
+
+            </div>
+        </div>
+
+        <div id="facetedSearch-content--{{hyphenate facet }}" class="sidebarBlock-content accordion-content" aria-hidden="true">
+            <ul id="facetedSearch-navList--{{hyphenate facet }}" data-facet="{{facet}}" class="navList" data-has-more-results="{{ has_more_results }}">
+                {{#each items}}
+                <li class="navList-item">
+                    <a
+                        href="{{ url }}"
+                        class="navList-action navList-action--checkbox {{#if selected }} is-selected {{/if}}"
+                        rel="nofollow"
+                        data-faceted-search-facet>
+                        {{{title}}}
+                        {{#if ../show_product_counts}}
+                            <span>({{ count }})</span>
+                        {{/if}}
+
+                        <span class="navList-action-close" aria-hidden="true">
+                            <svg class="icon">
+                                <use xlink:href="#icon-close"/>
+                            </svg>
+                        </span>
+                    </a>
+                </li>
+                {{/each}}
+            </ul>
+
+            {{#if show_more_toggle}}
+                <a href="#facetedSearch-navList--{{hyphenate facet }}" role="button" class="toggleLink">
+                    <span class="toggleLink-text toggleLink-text--off">{{lang 'search.faceted.show-more'}}</span>
+                </a>
+            {{/if}}
+        </div>
+    </div>
+    {{/or}}
+{{/if}}

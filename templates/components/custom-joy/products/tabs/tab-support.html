@@ -1,0 +1,112 @@
+  <div class="product_desc_content"> 
+    <p class="text-center-sm">
+      Got questions about us or our products?<br><br>Visit our <a href="https://www.thejoyfactory.com/faqs" class="primary-link">FAQs</a>
+    </p> 
+    <p>Looking for our product <b>Quick Start Guides</b>? <span id="demo">Downloads provided below.</span></p>
+  
+    <div class="qsg-app"></div>  
+    
+  </div>
+  
+  {{inject "sku" product.sku}}
+  {{inject "id" product.id}}
+  
+  
+  <!-- Start // QSG Script -->
+  <script>
+  
+  
+  // Note the lack of quotes around the jsContext handlebars helper, it becomes a string automatically.
+  const jsContext = JSON.parse({{jsContext}});
+  const pagesku = jsContext.sku;
+  const pageid = jsContext.id;
+  
+  
+  
+  
+  // const proxyurl = "http://herokuapp.com/";
+  // const proxyurl = "https://cors-anywhere.herokuapp.com/";
+  
+  const url = "https://mighty-basin-63208.herokuapp.com/myqsgs";
+  // const url = "https://sleepy-island-24911.herokuapp.com/assets/qsg.json";
+  
+  fetch(url)
+  .then(response => response.text())
+  .then(contents => {
+    let products = JSON.parse(contents);
+  
+    
+  
+    let match = products.filter(product => {
+      return product.sku == pagesku;
+    });
+  
+    const appdomain = 'https://mighty-basin-63208.herokuapp.com/';
+    // const appdomain = 'https://sleepy-island-24911.herokuapp.com';
+    let links = match[0].links;
+  
+  
+  
+  
+    let output = '';
+    let output2 = '';
+  
+    if(links !== null) {
+      
+     
+  
+        let output2 = `<a href="${links}" target="_blank"><i class="fa fa-file-pdf-o mx-3 my-3"></i>Download ${pagesku} Quick Start Guide PDF</a>`
+  
+        
+  
+        const downloadLinks2 = document.getElementsByClassName('qsg-app');
+        for(let i = 0; i < downloadLinks2.length; i++) {
+          downloadLinks2[i].innerHTML = output2;
+        }
+  
+     
+  
+        // output += `<a href="${appdomain}${link}" target="_blank"><i class="fa fa-file-pdf-o mx-3 my-3" style="font-size: 2rem"></i>Download ${pagesku} QSG File-0${index+1}</a><br>`
+       
+     
+     
+      return links
+    }
+  })
+  .catch((err) => document.getElementById("demo").innerHTML = '<br/><strong>No Quick Start PDF for this Product at this time</strong>')
+  
+  
+  
+  // Create Datasheet Link
+  
+  // const datasheetdomain = 'https://datasheet-demo.herokuapp.com';
+  // let output = `<a href="${datasheetdomain}?id=${pageid}&sku=${pagesku}" target="_blank"><i class="fa fa-file-pdf-o mx-3 my-3" style="font-size: 2rem"></i>Download ${pagesku} Datasheet PDF</a>`
+  
+//   const datasheetdomain = 'https://datasheet-frontendtjf-v1.netlify.app/';
+//const datasheetdomain = 'https://shop-thejoyfactory-usvq.onrender.com/';
+  //let output = `<a href="${datasheetdomain}?id=${pageid}&sku=${pagesku}" target="_blank"><i class="fa fa-file-pdf-o mx-3 my-3"></i>Download ${pagesku} Datasheet PDF</a>`
+  
+ 
+  
+  
+ // const downloadLinks = document.getElementsByClassName('datasheet-app');
+ // for(let i = 0; i < downloadLinks.length; i++) {
+  //  downloadLinks[i].innerHTML = output;
+ // }
+  
+  // const appdomain = 'https://mighty-basin-63208.herokuapp.com/';
+  // let output2 = `<a href="${link}" target="_blank"><i class="fa fa-file-pdf-o mx-3 my-3" style="font-size: 2rem"></i>Download ${pagesku} Quick Start Guide PDF</a>`
+  
+  
+  
+  // let output2 = `<a href="${appdomain}${link}" target="_blank"><i class="fa fa-file-pdf-o mx-3 my-3" style="font-size: 2rem"></i>Download ${pagesku} Quick Start Guide PDF</a>`
+  
+  // const downloadLinks2 = document.getElementsByClassName('qsg-app');
+  // for(let i = 0; i < downloadLinks2.length; i++) {
+  //   downloadLinks2[i].innerHTML = output2;
+  // }
+  
+  
+  
+  </script>
+  <!-- End-->

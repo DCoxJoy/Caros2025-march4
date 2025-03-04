@@ -1,0 +1,216 @@
+{{#if theme_settings.themevale_homepage_layout '!==' 'homepage layout 3'}}
+    <div class="themevale_service">
+        <div class="container">
+            <div class="themevale_column themevale_column--col4 themevale_customColumn">
+                <div class="item">
+                    <div class="service-wrapper">
+                        <div class="icon">
+                            <svg><use xlink:href="#{{theme_settings.themevale_customer-service-icon-1}}"></use></svg>
+                        </div>
+                        <div class="title">{{theme_settings.themevale_customer-service-title-1}}</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="service-wrapper">
+                        <div class="icon">
+                            <svg><use xlink:href="#{{theme_settings.themevale_customer-service-icon-2}}"></use></svg>
+                        </div>
+                        <div class="title">{{theme_settings.themevale_customer-service-title-2}}</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="service-wrapper">
+                        <div class="icon">
+                            <svg><use xlink:href="#{{theme_settings.themevale_customer-service-icon-3}}"></use></svg>
+                        </div>
+                        <div class="title">{{theme_settings.themevale_customer-service-title-3}}</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="service-wrapper">
+                        <div class="icon">
+                            <svg><use xlink:href="#{{theme_settings.themevale_customer-service-icon-4}}"></use></svg>
+                        </div>
+                        <div class="title">{{theme_settings.themevale_customer-service-title-4}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/if}}
+
+<footer class="footer custom_joy_footer_main">
+    <div class="container">
+        <!-- <div class="themevale_topFooter">
+            <h4 class="text">{{theme_settings.footer-top-content}}</h4>
+            <a class="phone" href="tel:{{theme_settings.footer-top-button}}">{{theme_settings.footer-top-button}}</a>
+        </div> -->
+
+        <div class="themevale_middleFooter" style="display: none;">
+            <div class="footer-info themevale_footer-info col-5">
+                <div class="footer-info-col" data-section-type="newsletterSubscription">
+                    <div class="item">
+                        {{#if settings.show_newsletter_box}}
+                            {{> components/common/subscription-form}}
+                        {{/if}}
+                    </div>
+                    <div class="item">
+                        {{> components/common/social-links}}
+                    </div>
+                </div>
+                <div class="footer-info-col footer-info-col--small footer-dropdownmobile" data-section-type="footer-categories">
+                    <h5 class="footer-info-heading">
+                        <span>{{lang 'footer.shop'}}</span>
+                        <svg class="icon-dropdown"><use xlink:href="#icon-chevron-down"></use></svg>
+                    </h5>
+                    <ul class="footer-info-list">
+                        {{#each (limit categories 9)}}
+                            <li>
+                                <a href="{{url}}">{{name}}</a>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                <div class="footer-info-col footer-info-col--small footer-dropdownmobile" data-section-type="footer-webPages">
+                    <h5 class="footer-info-heading">
+                        <span>{{lang 'footer.info'}}</span>
+                        <svg class="icon-dropdown"><use xlink:href="#icon-chevron-down"></use></svg>
+                    </h5>
+                    <ul class="footer-info-list">
+                        {{#each (limit pages 9)}}
+                            <li>
+                                <a href="{{url}}">{{name}}</a>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                <div class="footer-info-col footer-info-col--small footer-dropdownmobile">
+                    <h5 class="footer-info-heading">
+                        <span>{{lang 'footer.contact'}}</span>
+                        <svg class="icon-dropdown"><use xlink:href="#icon-chevron-down"></use></svg>
+                    </h5>
+                    <ul class="footer-info-list">
+                        <li class="store-address"><svg class="icon"><use xlink:href="#icon-location-2"></use></svg>{{nl2br settings.address}}</li>
+                        <li class="store-phone"><svg class="icon"><use xlink:href="#icon-telephone-2"></use></svg><p>{{theme_settings.footer-middle-phone1}}</p><p>{{theme_settings.footer-middle-phone2}}</p><a class="ask_an_expert" href="#" data-reveal-id="ask-an-expert">{{lang 'footer.ask_an_expert'}}</a></li>
+                        <li class="store-email"><svg class="icon"><use xlink:href="#icon-envelope-2"></use></svg><a href="mailto:{{theme_settings.footer-middle-email}}">Email: {{theme_settings.footer-middle-email}}</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-info-custom">
+                <div class="item">
+                    <span><i>Please note: All manufacturer names, symbols, and descriptions, used in our images & text are used solely for identification purposes only. It is neither inferred nor implied that any item sold by Speedo Demo is a product authorized by or in any way connected with any vehicle manufacturers displayed on this page.</i></span>
+                </div>
+                <div class="item">
+                    <div class="themevale_securityImage">
+                        <ul>
+                            <li>
+                                <img class="lazyload" src="{{cdn 'img/loading.svg'}}" data-src="/product_images/uploaded_images/{{theme_settings.themevale_footer-security-image-1}}" alt="lazyload">
+                            </li>
+                            <li>
+                                <img class="lazyload" src="{{cdn 'img/loading.svg'}}" data-src="/product_images/uploaded_images/{{theme_settings.themevale_footer-security-image-2}}" alt="lazyload">
+                            </li>
+                            <li>
+                                <img class="lazyload" src="{{cdn 'img/loading.svg'}}" data-src="/product_images/uploaded_images/{{theme_settings.themevale_footer-security-image-3}}" alt="lazyload">
+                            </li>
+                            <li>
+                                <img class="lazyload" src="{{cdn 'img/loading.svg'}}" data-src="/product_images/uploaded_images/{{theme_settings.themevale_footer-security-image-4}}" alt="lazyload">
+                            </li>
+                        </ul>
+                    </div>
+                    {{#if theme_settings.geotrust_ssl_common_name}}
+                        <div class="footer-geotrust-ssl-seal">
+                            {{> components/common/geotrust-ssl-seal}}
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+
+        <div class="custom_joy_footer 123">
+            <div class="joy_footer_column joy_footer_column1"> 
+                <div class="footer_logo"> 
+                    <a href="https://thejoyfactory.com/">
+                        {{#if settings.store_logo.image}}
+                            {{#if theme_settings.logo_size '===' 'original'}}
+                                <img class="header-logo-image-unknown-size" src="{{getImage settings.store_logo.image 'logo_size'}}" alt="{{settings.store_logo.title}}" title="{{settings.store_logo.title}}">
+                            {{else}}
+                                <span class="header-logo-image-container">
+                                    <img class="header-logo-image" src="{{getImage settings.store_logo.image 'logo_size'}}" alt="{{settings.store_logo.title}}" title="{{settings.store_logo.title}}">
+                                </span>
+                            {{/if}}
+                        {{else}} 
+                            <img src="{{cdn 'img/Logo-Joy.png'}}" alt="Footer Logo Image">
+                        {{/if}}
+                    </a>
+                </div>
+                <div class="footer_logo_text">
+                    <h4>Rugged Solutions for the Connected Frontline</h4>
+                </div>
+                
+            </div>
+           
+            <div class="joy_footer_column joy_footer_column2">
+                <h5 class="footer_column_heading">Quick Links</h5>
+                {{> components/custom-joy/common/footer-menu/quick-links}}
+            </div>
+            <div class="joy_footer_column joy_footer_column3">
+                <h5 class="footer_column_heading">Resources</h5>
+                {{> components/custom-joy/common/footer-menu/resources}}
+            </div>
+            <div class="joy_footer_column joy_footer_column4">
+                <h5 class="footer_column_heading">Legal</h5>
+                {{> components/custom-joy/common/footer-menu/legal}}
+            </div>
+            <div class="joy_footer_column joy_footer_column5">
+                <h5 class="footer_column_heading">Contact Us</h5> 
+                {{> components/custom-joy/common/footer-menu/contact}}
+            </div>
+        </div>
+
+        <div class="custom-joy-copyright">
+            <p>&copy; {{moment format="YYYY"}} {{settings.store_name}}. All Rights Reserved.</p>
+        </div>
+
+    </div>
+    <div class="themevale_bottomFooter" style="display: none;">
+        <div class="container">
+            <div class="item">
+                {{#if theme_settings.show_copyright_footer}}
+                    <div class="footer-copyright">
+                        <p class="powered-by">&copy; {{moment format="YYYY"}} {{settings.store_name}} </p>
+                    </div>
+                {{/if}}
+                {{#if theme_settings.show_powered_by}}
+                    <div class="footer-copyright">
+                        <p class="powered-by">{{theme_settings.powered_by_content}}</p>
+                    </div>
+                {{/if}}
+            </div>
+            <div class="item">
+                {{> components/common/payment-icons}}
+            </div>
+        </div>
+    </div>
+</footer>
+
+{{#if theme_settings.themevale_BackTop}}
+    <div id="back-to-top">
+        <a href="javascript:void(0)"><svg class="icon"><use xlink:href="#icon-keyboard-arrow-down"></use></svg></a>
+    </div>
+{{/if}}
+
+
+{{#if theme_settings.themevale_ask-an-expert}}
+    {{> components/themevale/ask-an-expert}}
+{{/if}}
+
+{{!-- {{#if theme_settings.themevale_RecentlyBought}}
+<div class="themevale_popup_left"></div>
+{{/if}} --}}
+
+{{#if settings.privacy_cookie }}
+    <div class="themevale_popup_right">
+        {{> components/common/cookie }}
+    </div>
+{{/if}}
+

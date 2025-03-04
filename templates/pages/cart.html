@@ -1,0 +1,43 @@
+---
+cart: true
+---
+{{#partial "page"}}
+<div class="themevale_breadcrumb">
+    {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+    {{> components/cart/page-title}}   
+</div>
+<div class="page">
+    <main class="page-content" data-cart>
+        <div data-cart-status>
+            {{> components/cart/status-messages}}
+        </div>
+        {{#if cart.items.length}}
+            <div class="loadingOverlay"></div>
+
+            <div data-cart-content>
+                {{> components/cart/content}}
+            </div>
+
+            <div class="cart-actions-wrapper">
+                <div class="button-group" data-cart-empty data-go-home>
+                    <button class="button" id="emptyCart" data-confirm="Are you sure you want to empty your cart?">Clear Shopping Cart</button>
+                    <a class="button" href="{{urls.home}}">Continue Shopping</a>
+                </div>
+                {{> components/themevale/product/security-image}}
+            </div>
+
+            <div class="data-cart-totals">
+                <div data-cart-totals>
+                    {{> components/cart/totals}}
+                </div>
+            </div>
+        {{else}}
+            <h3 class="cart-title-empty">{{lang 'cart.checkout.empty_cart'}}</h3>
+            {{{ remote_api_scripts }}}
+        {{/if}}
+
+        {{{snippet 'cart'}}}
+    </main>
+</div>
+{{/partial}}
+{{> layout/base}}

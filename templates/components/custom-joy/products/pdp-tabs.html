@@ -1,0 +1,79 @@
+<div class="themevale_productDescription custom-joy-description">
+    <div class="productView-description"{{#if schema}} itemprop="description"{{/if}}>
+        <ul class="tabs tabs-custom-2" data-tab>
+            <li class="tab is-active">
+                <a class="tab-title" href="#tab-description">{{lang 'products.description'}}</a>
+            </li>
+            <li class="tab">
+                <a href="#tab-specifications" class="tab-title">{{lang 'products.specifications'}}</a>
+            </li>
+            <li class="tab">
+                <a href="#tab-support" class="tab-title">{{lang 'products.support'}}</a>
+            </li> 
+        </ul>
+        <div class="tabs-contents">
+            <div class="tab-content is-active" id="tab-description">
+                <div class="toggle-title">
+                    <a class="toggleLink is-open" data-collapsible href="#tabDescription-content">
+                        <span class="page-heading">{{lang 'products.description'}}</span>
+                        <svg class="icon"><use xlink:href="#icon-slick-next"/></svg>
+                    </a>
+                </div>
+                <div class="toggle-content is-open" id="tabDescription-content" aria-hidden="false" {{#if settings.data_tag_enabled}} data-event-type="product" {{/if}}>
+                  {{> components/custom-joy/products/tabs/tab-info}}
+                </div>
+            </div>
+            <div class="tab-content" id="tab-specifications">
+                <div class="toggle-title">
+                    <a class="toggleLink" data-collapsible href="#tabSpecifications-content">
+                        <span class="page-heading">{{lang 'products.specifications'}}</span>
+                        <svg class="icon"><use xlink:href="#icon-slick-next"/></svg>
+                    </a>
+                </div>
+                <div class="toggle-content" id="tabSpecifications-content" aria-hidden="false">
+                  {{> components/custom-joy/products/tabs/tab-specifications}}
+                </div>
+            </div>
+            <div class="tab-content" id="tab-support">
+                <div class="toggle-title">
+                    <a class="toggleLink" data-collapsible href="#tabSupport-content">
+                        <span class="page-heading">{{lang 'products.support'}}</span>
+                        <svg class="icon"><use xlink:href="#icon-slick-next"/></svg>
+                    </a>
+                </div>
+                <div class="toggle-content" id="tabSupport-content" aria-hidden="false">
+                    {{> components/custom-joy/products/tabs/tab-support}}
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+{{#all settings.show_product_reviews}}
+    {{> components/products/reviews reviews=product.reviews product=product urls=urls}}
+{{/all}}
+
+{{#if product.similar_by_views}}
+    <div class="toggle productSimilar" id="product-similar" data-product-reviews>
+        <div class="toggle-title">
+            <h4 class="page-heading">{{lang 'products.similar_by_views'}}</h4>
+        </div>
+        <div class="toggle-content is-open" id="productSimilar-content" aria-hidden="false">
+            {{> components/products/carousel products=product.similar_by_views theme_settings=theme_settings arrows=true}}
+        </div>
+    </div>
+{{/if}}
+
+
+<script>
+    const jsContext1 = JSON.parse({{jsContext}});
+    const pagesku1 = jsContext1.sku;
+    const pageid1 = jsContext1.id;
+    
+    const datasheetdomain1 = 'https://shop-thejoyfactory-usvq.onrender.com/';
+    // const datasheetdomain1 = 'https://datasheet-frontendtjf-v1.netlify.app/';
+    
+    const productSheetLink = document.getElementById('product_sheet');
+    productSheetLink.href = `${datasheetdomain1}?id=${pageid1}&sku=${pagesku1}`;
+    productSheetLink.target = "_blank";
+</script>
+    

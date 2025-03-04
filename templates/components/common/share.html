@@ -1,0 +1,114 @@
+{{#if settings.add_this.buttons}}
+    <div class="addthis_toolbox addthis_32x32_style" addthis:url="{{url}}" addthis:title="{{title}}">
+        <ul class="socialLinks">
+            {{#each settings.add_this.buttons}}
+                <li class="socialLinks-item socialLinks-item--{{service}}">
+                    <a class="social-share addthis_button_{{service}} icon icon--{{service}}" data-service="{{service}}" href="#" target="_blank">
+                        {{#if service '===' 'facebook'}}
+                            <svg>
+                                <use xlink:href="#icon-facebook"/>
+                            </svg>
+                        {{/if}}
+
+                        {{#if service '===' 'twitter'}}
+                            <svg>
+                                <use xlink:href="#icon-twitter"/>
+                            </svg>
+                        {{/if}}
+
+                        {{#if service '===' 'pinterest'}}
+                            <svg>
+                                <use xlink:href="#icon-pinterest"/>
+                            </svg>
+                        {{/if}}
+
+                        {{#if service '===' 'linkedin'}}
+                            <svg>
+                                <use xlink:href="#icon-linkedin"/>
+                            </svg>
+                        {{/if}}
+
+                        {{#if service '===' 'google'}}
+                            <svg>
+                                <use xlink:href="#icon-google"/>
+                            </svg>
+                        {{/if}}
+
+                        {{#if service '===' 'email'}}
+                            <svg>
+                                <use xlink:href="#icon-envelope"/>
+                            </svg>
+                        {{/if}}
+
+
+                        {{#if service '===' 'google_plusone'}}
+                            <svg>
+                                <use xlink:href="#icon-google-plus"/>
+                            </svg>
+                        {{/if}}
+
+                        {{#if service '===' 'facebook_like'}}
+                            <svg>
+                                <use xlink:href="#icon-facebook_like"/>
+                            </svg>
+                        {{/if}}
+                    </a>
+                </li>
+            {{/each}}
+        </ul>
+        
+        <script type="text/javascript" defer src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4e94ed470ee51e32"></script>
+        <script>
+            window.addEventListener('DOMContentLoaded', function() {
+                if (typeof addthis === "object") {
+                    addthis.toolbox('.addthis_toolbox');
+                }
+
+                // Ensure proper sharing links are generated dynamically
+                var currentUrl = encodeURIComponent(window.location.href);
+                var pageTitle = encodeURIComponent(document.title);
+                var pageImage = encodeURIComponent(document.querySelector("meta[property='og:image']")?.content || '');
+                var pageDescription = encodeURIComponent(document.querySelector("meta[name='description']")?.content || '');
+
+                document.querySelectorAll(".social-share").forEach(function (link) {
+                    var service = link.dataset.service;
+                    var shareUrl = "";
+
+                    switch (service) {
+                        case "facebook":
+                            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+                            break;
+                        case "twitter":
+                            shareUrl = `https://twitter.com/intent/tweet?url=${currentUrl}&text=${pageTitle}`;
+                            break;
+                        case "pinterest":
+                            shareUrl = `https://www.pinterest.com/pin/create/button/?url=${currentUrl}&media=${pageImage}&description=${pageTitle}`;
+                            break;
+                        case "linkedin":
+                            shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${currentUrl}&title=${pageTitle}&summary=${pageDescription}`;
+                            break;
+                        case "email":
+                            shareUrl = `mailto:?subject=${pageTitle}&body=${currentUrl}`;
+                            break;
+                        case "print":
+                            shareUrl = "javascript:window.print();";
+                            break;
+                        case "google":
+                            shareUrl = `https://plus.google.com/share?url=${currentUrl}`;
+                            break;
+                        case "google_plusone":
+                            shareUrl = `https://plus.google.com/share?url=${currentUrl}`;
+                            break;
+                        case "facebook_like":
+                            shareUrl = `https://www.facebook.com/plugins/like.php?href=${currentUrl}&layout=button&action=like&show_faces=false&share=false`;
+                            break;
+                        default:
+                            return;
+                    }
+
+                    link.setAttribute("href", shareUrl);
+                });
+            });
+        </script>
+    </div>
+{{/if}}

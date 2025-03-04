@@ -1,0 +1,14 @@
+<a href="{{url}}">
+    {{name}}
+</a>
+<ul>        
+    {{#each children}}
+        <li>
+            {{#if children}}
+                {{> components/themevale/category-filter/multi-level-category-all}}
+            {{else}}
+                <a href="{{url}}">{{name}}</a>
+            {{/if}}
+        </li>
+    {{/each}}
+</ul>

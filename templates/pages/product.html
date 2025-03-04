@@ -1,0 +1,43 @@
+---
+products:
+    new:
+        limit: {{theme_settings.homepage_new_products_count}}
+product:
+    videos:
+        limit: {{theme_settings.productpage_videos_count}}
+    reviews:
+        limit: {{theme_settings.productpage_reviews_count}}
+    related_products:
+        limit: {{theme_settings.productpage_related_products_count}}
+    similar_by_views:
+        limit: {{theme_settings.productpage_similar_by_views_count}}
+---
+{{#partial "page"}}
+    <div class="themevale_breadcrumb">
+        {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+    </div>
+
+    {{#each product.shipping_messages}}
+        {{> components/common/alert-info message}}
+    {{/each}}
+
+    <div class="joy-product-detail product-detail-block">
+        {{> components/custom-joy/products/product-view }}
+
+        {{{region name="product_below_content"}}}
+
+        {{> components/custom-joy/products/pdp-tabs}}
+    </div>
+{{/partial}}
+
+{{#partial "full_width"}}
+    {{> components/custom-joy/products/pdp-video}}
+
+    <div class="joy-product-detail product-detail-block">
+        {{> components/custom-joy/products/pdp-related}}
+    </div>
+
+    {{> components/products/schema}}
+{{/partial}}
+
+{{> layout/base}}

@@ -1,0 +1,393 @@
+<div class="productView joy-productview themevale_productView" data-event-type="product" data-entity-id="{{product.id}}" data-name="{{product.title}}" data-product-category="{{#each product.category}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}" data-product-brand="{{product.brand.name}}" data-product-price="{{#if product.price.with_tax}}{{product.price.with_tax.value}}{{else}}{{product.price.without_tax.value}}{{/if}}" data-product-variant="single-product-option">
+    {{#each product.reviews.messages}}
+        {{#if error}}
+            {{> components/common/alert-error error}}
+        {{/if}}
+        {{#if success}}
+            {{> components/common/alert-success success}}
+        {{/if}}
+    {{/each}}
+    <div class="themevale_productView-left">
+        <div class="productView-images">
+            <div class="themevale_badges">
+                {{#each products.new}}
+                    {{#if this.id '==' ../product.id}}
+                    <div class="new-badge themevale_badge">
+                        <span class="text">{{lang 'products.badges.new'}}</span>
+                    </div>
+                    {{/if}}
+                {{/each}}
+                {{#or product.price.non_sale_price_with_tax product.price.non_sale_price_without_tax}}
+                    <div class="sale-badge themevale_badge">
+                        <span class="text">{{lang 'products.badges.sale'}}</span>
+                    </div>
+                {{/or}}
+                {{#each product.custom_fields}}
+                    {{#if name '===' 'customlabel'}}
+                    <div class="custom-badge themevale_badge">
+                        <span class="text">{{{value}}}</span>
+                    </div>
+                    {{/if}}
+                {{/each}}
+                {{#if product.out_of_stock_message}}
+                    <div class="soldOut-badge themevale_badge">
+                        <span class="text">{{lang 'products.badges.sold_out'}}</span>
+                    </div>
+                {{/if}}
+            </div>
+            <div class="themevale_productViewImage zoom-image" data-image-gallery>
+                <figure class="productView-image" data-image-gallery-main {{#if product.main_image}}data-zoom-image="{{getImage product.main_image 'zoom_size' (cdn theme_settings.default_image_product)}}"{{/if}}>
+                    <div class="productView-img-container">
+                        {{#if product.main_image}}
+                            <a href="{{getImage product.main_image 'zoom_size' (cdn theme_settings.default_image_product)}}" data-reveal-id="video-gallery-pc-popup">
+                        {{/if}}
+                            <img class="productView-image--default lazyload"
+                                 data-sizes="auto"
+                                 src="{{cdn 'img/loading.svg'}}"
+                                 data-src="{{getImage product.main_image 'product_size' (cdn theme_settings.default_image_product)}}"
+                                 alt="{{product.main_image.alt}}" title="{{product.main_image.alt}}" data-main-image>
+                        {{#if product.main_image}}
+                            </a>
+                        {{/if}}
+                    </div>
+                    <div class="hover-to-zoom">
+                        <svg class="icon"><use xlink:href="#icon-search"></use></svg>
+                        <span class="text">{{lang 'products.click_zoom'}}</span>
+                    </div>
+                </figure> 
+                <div class="productView-thumbnails-wrappers"> 
+                    <ul class="productView-thumbnails">
+                        {{#each product.images}}
+                            <li class="productView-thumbnail">
+                                <a
+                                    class="productView-thumbnail-link"
+                                    href="{{getImage this 'product_size' (cdn ../theme_settings.default_image_product)}}"
+                                    data-reveal-id="video-gallery-pc-popup"
+                                    data-image-gallery-item
+                                    data-image-gallery-new-image-url="{{getImage this 'product_size' (cdn ../theme_settings.default_image_product)}}"
+                                    data-image-gallery-zoom-image-url="{{getImage this 'zoom_size' (cdn ../theme_settings.default_image_product)}}">
+                                    <!-- <img class="lazyload" data-sizes="auto" src="{{cdn 'img/loading.svg'}}" data-src="{{getImage this 'productview_thumb_size' (cdn ../theme_settings.default_image_product)}}" alt="{{this.alt}}" title="{{this.alt}}"> -->
+                                    <img class="lazyload" data-sizes="auto" src="{{getImage this 'productview_thumb_size' (cdn ../theme_settings.default_image_product)}}" data-src="{{getImage this 'productview_thumb_size' (cdn ../theme_settings.default_image_product)}}" alt="{{this.alt}}" title="{{this.alt}}">
+                                </a>
+                            </li>
+                        {{/each}}
+                        {{#if product.videos}}
+                            <li class="productView-thumbnail-custom">
+                                <a class="video-link" href="javascript:void(0)" data-reveal-id="video-gallery-pc-popup" data-video-icon>
+                                    <span class="icon"><img src="/product_images/uploaded_images/{{theme_settings.product_video-image}}" alt=""></span>
+                                    <span class="text">{{theme_settings.product_video-text}}</span>
+                                </a>
+                            </li>
+                        {{/if}}
+                        {{> components/themevale/product/customfields-instruction-warranty}}
+                    </ul> 
+                </div>
+            </div>
+            <div class="themevale_productViewImage themevale_productViewImage-mobile" data-image-gallery-mobile>
+                <div class="productView-image-mobile">
+                    {{#each product.images}}
+                        <figure class="productView-image"
+                            data-image-gallery-main data-fancybox="images" href="{{getImage this 'zoom_size' (cdn ../theme_settings.default_image_product)}}
+                            data-zoom-image="{{getImage this 'zoom_size' (cdn theme_settings.default_image_product)}}">
+                            <div class="productView-img-container">
+                                <a href="{{getImage this 'zoom_size' (cdn theme_settings.default_image_product)}}">
+                                    <img class="productView-image--default lazyload"
+                                        data-sizes="auto"
+                                        src="{{cdn 'img/loading.svg'}}"
+                                        data-src="{{getImage this 'product_size' (cdn theme_settings.default_image_product)}}"
+                                        alt="{{product.main_image.alt}}" title="{{product.main_image.alt}}" data-main-image>
+                                </a>
+                            </div>
+                        </figure>
+                    {{/each}}
+                </div>
+                <ul class="productView-thumbnails-mobile">
+                    {{#if product.videos.list.length}}
+                        <li class="productView-thumbnail-custom">
+                            <a class="video-link" href="javascript:void(0);" data-reveal-id="video-gallery-popup">
+                                <span class="icon"><img class="lazyload" data-sizes="auto" src="{{cdn 'img/loading.svg'}}" data-src="/product_images/uploaded_images/{{theme_settings.product_video-image}}" alt=""></span>
+                                <span class="text">{{theme_settings.product_video-text}}</span>
+                            </a>
+                            {{> components/themevale/product/video-gallery product.videos}}
+                        </li>
+                    {{/if}}
+                    {{> components/themevale/product/customfields-instruction-warranty}}
+                </ul>
+            </div>
+           
+        </div>
+    </div>
+    <div class="themevale_productView-right">
+        <div class="productView-details wishlist-wrapper" data-entity-id="{{product.id}}">
+            <div class="productView-product">
+                <div class="product-title-header"> 
+                    {{#if product.brand}}
+                        <h2 class="productView-brand">
+                            <a href="{{product.brand.url}}"><span>{{product.brand.name}}</span></a>
+                        </h2>
+                    {{/if}}
+                    <h1 class="productView-title">{{product.title}}</h1>
+                </div>
+                <div class="productView-rating comment">
+                    {{#if settings.show_product_rating}} 
+                        <div class="rating-icons-wrapper"> 
+                            {{> components/products/ratings rating=product.rating}}
+                        </div>
+                        <span class="productView-reviewLink review-link">
+                            {{#if product.num_reviews '>' 0}}
+                                <a href="{{product.url}}#product-reviews">
+                                    {{product.num_reviews}} reviews
+                                </a>
+                            {{else}}
+                                No reviews yet
+                            {{/if}}
+                        </span>
+                    {{/if}}
+                    {{#if settings.show_product_reviews}}
+                        <span class="productView-reviewLink popup-link">
+                            <a href="{{product.url}}{{#if is_ajax}}#write_review{{/if}}"
+                               {{#unless is_ajax }}data-reveal-id="modal-review-form"{{/unless}}>
+                               {{lang 'products.reviews.new'}}
+                            </a>
+                        </span>
+                        {{> components/products/modals/writeReview}}
+                    {{/if}}
+                </div>
+
+                {{> components/themevale/product/countdown}}
+
+                <p class="short-description">
+                    {{#eachIndex (split product.description '&lt;!-- split --&gt;')}}
+                    {{#if index '==' '0' }}
+                      {{{item}}}
+                    {{/if}}
+                    {{/eachIndex}}
+                </p>
+  
+
+                {{#if product.call_for_price}}
+                    <p class="productView-price">
+                        <span>{{product.call_for_price}}</span>
+                    </p>
+                {{/if}}
+                <div class="productView-price">
+                    {{#or customer (if theme_settings.restrict_to_login '!==' true)}}
+                        {{> components/products/price price=product.price }}
+                    {{else}}
+                        {{> components/common/login-for-pricing}}
+                    {{/or}}
+                    {{#if theme_settings.product_soldProduct}}
+                        <!-- <div class="sold-product"></div> -->
+                    {{/if}}
+                </div>
+                {{{region name="product_below_price"}}}
+                {{product.detail_messages}}
+                <dl class="productView-info">
+                    {{#if product.sku}}
+                        <div class="productView-info-wrapper"> 
+                            <dt class="productView-info-name">{{lang 'products.sku'}}</dt>
+                            <dd class="productView-info-value" data-product-sku>{{product.sku}}</dd>
+                        </div>
+                    {{/if}}
+                    {{#if product.availability}}
+                        <div class="productView-info-wrapper"> 
+                            <dt class="productView-info-name">{{lang 'products.availability'}}</dt>
+                            <dd class="productView-info-value">{{product.availability}}</dd>
+                        </div>
+                    {{/if}} 
+                    {{#each product.custom_fields}}
+                        {{#and (if name '!=' 'warranty' ) (if name '!=' 'instruction')}}
+                            {{#and (if name '!=' 'countdown' ) (if name '!=' 'customlabel')}}
+                            {{#if name '==' 'product_type'}}
+                                <div class="productView-info-wrapper">
+                                    <dt class="productView-info-name {{name}}">Product Type:</dt>
+                                    <dd class="productView-info-value {{name}}">{{{value}}}</dd>
+                                </div>
+                            {{/if}}
+                            {{#if name '==' 'colors'}}
+                                <div class="productView-info-wrapper">
+                                    <dt class="productView-info-name {{name}}">Color:</dt>
+                                    <dd class="productView-info-value {{name}}">{{{value}}}</dd>
+                                </div>
+                            {{/if}}
+                            {{#if name '==' 'product_status'}}
+                                <div class="productView-info-wrapper">
+                                    <dt class="productView-info-name {{name}}">Status:</dt>
+                                    <dd class="productView-info-value {{name}}">{{{value}}}</dd>
+                                </div>
+                            {{/if}}
+                            {{/and}}
+                        {{/and}}
+                    {{/each}}
+                    <div class="productView-info-bulkPricing">
+                        {{> components/products/bulk-discount-rates bulk_discount_rates=product.bulk_discount_rates}}
+                    </div>
+                </dl>
+            </div>
+            <div class="productView-options">
+                {{#if product.release_date }}
+                    <p>{{product.release_date}}</p>
+                {{/if}}
+                <form class="form" method="post" action="{{product.cart_url}}" enctype="multipart/form-data"
+                      data-cart-item-add>
+                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" name="product_id" value="{{product.id}}"/>
+                    <div data-product-option-change style="display:none;">
+                        {{#each product.options}}
+                            {{{dynamicComponent 'components/products/options'}}}
+                        {{/each}}
+                    </div>
+
+                    <div class="form-field form-field--stock{{#unless product.stock_level}} u-hiddenVisually{{/unless}}">
+                        <label class="form-label form-label--alternate">
+                            {{lang 'products.current_stock'}}
+                            <span data-product-stock>{{product.stock_level}}</span>
+                        </label>
+                    </div>
+                
+                    
+                    {{#if product.sku}}
+                    {{assignVar "productSku" product.sku}}
+                {{/if}}
+                {{#if product.title}}
+                    {{assignVar "productTitle" product.title}}
+                {{/if}}
+                
+                {{assignVar "productStatus" "Active"}}
+
+                                {{#if product.options}}
+                      
+                                        {{> components/products/add-to-cart}}
+                                    {{else}}
+                                        {{#if product.can_purchase}}
+                                            {{> components/products/add-to-cart}}
+                                        {{/if}}
+                                        {{#if product.out_of_stock}}
+                                            <div class="form-action {{#unless product.options}}form-action-2{{/unless}}">
+                                                {{#if product.out_of_stock_message}}
+                                                    <div class="button" disabled>{{{product.out_of_stock_message}}}</div>
+                                                {{else}}
+                                                    <div class="button" disabled>{{lang 'products.sold_out'}}</div>
+                                                {{/if}}
+                                            </div>
+                                        {{/if}}
+                                    {{/if}}
+                                    
+                                    {{#if product.custom_fields}}
+                                    {{#each product.custom_fields}}
+                                        {{#if name '===' 'product_status'}}
+                                            {{assignVar "productStatus" value}}
+                                        {{/if}}
+                                    {{/each}}
+                                {{/if}}
+
+                                {{!-- Show Add to Cart & Buy Now for "Active" --}}
+                                {{#if productStatus '===' 'Active'}}
+                                <div class="joy_product_actions_btns_wrapper">
+                                    {{#if product.options}}
+                                        {{> components/products/add-to-cart}}
+                                    {{else}}
+                                        {{#if product.can_purchase}}
+                                            {{> components/products/add-to-cart}}
+                                        {{/if}}
+                                        {{#if product.out_of_stock}}
+                                            <div class="form-action {{#unless product.options}}form-action-2{{/unless}}">
+                                                {{#if product.out_of_stock_message}}
+                                                    <div class="button" disabled>{{{product.out_of_stock_message}}}</div>
+                                                {{else}}
+                                                    <div class="button" disabled>{{lang 'products.sold_out'}}</div>
+                                                {{/if}}
+                                            </div>
+                                        {{/if}}
+                                    {{/if}}
+                                </div>
+                            {{/if}}
+                            {{#if productStatus '===' 'Pre-Order'}}
+                            <div class="joy_product_actions_btns_wrapper">
+                                {{#if product.options}}
+                                    {{> components/products/add-to-cart}}
+                                {{else}}
+                                    {{#if product.can_purchase}}
+                                        {{> components/products/add-to-cart}}
+                                    {{/if}}
+                                    {{#if product.out_of_stock}}
+                                        <div class="form-action {{#unless product.options}}form-action-2{{/unless}}">
+                                            {{#if product.out_of_stock_message}}
+                                                <div class="button" disabled>{{{product.out_of_stock_message}}}</div>
+                                            {{else}}
+                                                <div class="button" disabled>{{lang 'products.sold_out'}}</div>
+                                            {{/if}}
+                                        </div>
+                                    {{/if}}
+                                {{/if}}
+                            </div>
+                        {{/if}}
+                        {{#if (getVar "productStatus")}}
+                            {{#if (getVar "productStatus") '===' 'Coming Soon'}}
+                                <a href="javascript:void(0);" class="button button--secondary coming-soon-button" disabled>
+                                    Coming Soon
+                                </a>
+                            {{/if}}
+                        {{/if}}
+                        {{#if (getVar "productStatus") '===' 'Inactive'}}
+                            <div class="inactive-message">
+                                <p><strong>Note:</strong> This product is currently inactive and unavailable.</p>
+                            </div>
+                        {{/if}}
+                        {{#if (getVar "productStatus") '===' 'Out of Stock'}}
+                            <div class="out-of-stock-message">
+                                <p><strong>Note:</strong> This product is currently out of stock.</p>
+                            </div>
+                        {{/if}}
+                        {{#if (getVar "productStatus") '===' 'Discontinued'}}
+                            <div class="discontinued-message">
+                                <p><strong>Note:</strong> This product has been discontinued.</p>
+                            </div>
+                        {{/if}}
+                        {{#if (getVar "productStatus") '===' 'Request for Quote'}}
+                        <a href="/request-for-quote/?message=I%20am%20interested%20in%20a%20quote%20for%20{{getVar "productTitle"}}%20(SKU:%20{{getVar "productSku"}}),%20please%20contact%20me"
+                        class="button button--primary request-quote-button">
+                        Request a Quote</a>
+                        {{/if}}
+                        
+                        
+                              
+
+                </form> 
+            </div>
+
+            {{> components/custom-joy/products/product-details-btns}}
+            
+            {{#if theme_settings.product_viewingProduct}}
+                <div class="viewing-product comment">
+                    <svg class="icon"><use xlink:href="#icon-eye"></use></svg>5 customers are viewing this product
+                </div>
+            {{/if}}
+            {{> components/common/share}}
+            
+            {{!-- {{> components/themevale/product/security-image}} --}}
+            
+            {{{snippet 'product_details'}}}
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    {{> components/themevale/themevale-fbt}}
+
+    {{#if theme_settings.themevale_sticky-add-to-cart}}
+        {{> components/themevale/product/sticky-add-to-cart}}
+    {{/if}}
+</div> 
+
+{{> components/custom-joy/products/ask-an-expert}}
+
+{{> components/themevale/product/video-gallery-pc product.videos}}
+<div id="previewModal" class="modal" data-reveal>
+    <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
+        <span aria-hidden="true">&#215;</span>
+    </a>
+    <div class="modal-content"></div>
+    <div class="loadingOverlay"></div>
+</div>
+
+
+

@@ -1,0 +1,45 @@
+{{#partial "hero"}}
+    {{#if carousel}}
+        {{> components/carousel-2 arrows=theme_settings.homepage_show_carousel_arrows dots=theme_settings.homepage_show_carousel_dots}}
+    {{/if}}
+    {{{snippet 'home_content'}}}
+{{/partial}}
+
+{{#partial "page"}}
+
+    {{#each shipping_messages}}
+        {{> components/common/alert-info message}}
+    {{/each}}
+
+<div class="main full">
+    <div class="themevale_section padding-top-30 padding-bottom-30 background-gray">
+        {{{region name="home_category_carousel_2"}}}
+    </div>
+
+    {{> components/themevale/homepage/component/flash-sale-category-3 }}
+
+    {{> components/themevale/homepage/component/featured-category-2 }}
+
+    {{> components/themevale/homepage/component/themevale_service }}
+
+    <div class="themevale_section padding-top-70 padding-bottom-20"> 
+        {{{region name="home_category_card_5"}}}
+    </div>
+
+    {{> components/themevale/homepage/component/ajax-products-by-category-sorting-new products=products.new }}
+
+    <div class="themevale_section padding-top-20 padding-bottom-0"> 
+        {{{region name="home_category_card_6"}}}
+    </div>
+
+    {{> components/themevale/homepage/component/products-tabs }}
+
+    <div class="themevale_section padding-top-0 padding-bottom-70"> 
+        {{{region name="home_brands_grid_2"}}}
+    </div>
+
+    {{> components/themevale/homepage/component/custom_recent_blogs }}
+
+</div>
+{{/partial}}
+{{> layout/base}}

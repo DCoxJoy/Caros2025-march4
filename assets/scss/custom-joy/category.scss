@@ -1,0 +1,32 @@
+.page-type-category .body > .page{
+    padding-top: 100px;
+    @media (max-width: 991px) {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+}
+.themevale_categoryToolbar{
+    background: rgba(241, 241, 241, 1);
+    padding: 20px 30px;
+    border-radius: 10px;
+    justify-content: space-between;
+}
+.productGrid--maxCol3 .productGrid .product {
+    padding: 15px;
+    @media (max-width: 767px) {
+        padding: 8px;   
+    }
+    @media (max-width: 650px) {
+        width: 100%;   
+    }
+}
+.pagination > div{
+    display: none;
+}
+
+.page-type-category {
+    .themevale_subCategory {
+        display: none;
+    }
+}

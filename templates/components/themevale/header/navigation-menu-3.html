@@ -1,0 +1,49 @@
+<div class="navPages-container" id="menu" data-menu>
+    <div class="themevale_allCategories {{#if theme_settings.themevale_allCategories_open}}is-open{{/if}}">
+        <p class="themevale_allCategories-text">
+            <svg class="icon"><use xlink:href="#menu-mobile"></use></svg>
+            <span class="text">{{lang 'category.label'}}</span>
+        </p>
+        <div class="themevale_allCategories-dropdown">
+            <ul class="navPages-list">
+                {{#each categories}}
+                    {{#or (if id '==' ../theme_settings.themevale_category-custom-1) (if id '==' ../theme_settings.themevale_category-custom-2) (if id '==' ../theme_settings.themevale_category-custom-3) (if id '==' ../theme_settings.themevale_category-custom-4) (if id '==' ../theme_settings.themevale_category-custom-5) (if id '==' ../theme_settings.themevale_category-custom-6)}}
+                    {{else}}
+                        <li class="navPages-item">
+                            {{#if children}}
+                                <p class="navPages-action navPages-action-depth-max has-subMenu is-root">
+                                    <a class="text" href="{{url}}">{{name}}</a>
+                                    <span class="navPages-action-moreIcon" aria-hidden="true">
+                                        <svg class="icon"><use xlink:href="#icon-chevron-down" /></svg>
+                                    </span>
+                                </p>
+                                {{> components/common/navigation-dropdown}}
+                            {{else}}
+                                <a class="navPages-action" href="{{url}}">
+                                    <span class="text">{{name}}</span>
+                                </a>
+                            {{/if}}
+                        </li>
+                    {{/or}}
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+    <nav class="navPages">
+        <ul class="navPages-list navPages-list--user">
+            <li class="navPages-item">
+                <a class="navPages-action" href="{{urls.home}}"><span class="text">{{lang 'home.heading'}}</span></a>
+            </li>
+            {{#each pages}}
+                <li class="navPages-item">
+                    {{> components/common/navigation-list-alternate}}
+                </li>
+            {{/each}}
+        </ul>
+    </nav>
+    {{#if theme_settings.themevale_header-layout-3-customlink}}
+    <div class="custom-link">
+        <a class="navPages-action" href="{{theme_settings.themevale_header-layout-3-customlink}}"><span class="text">{{theme_settings.themevale_header-layout-3-customtext}}</span></a>
+    </div>
+    {{/if}}
+</div>

@@ -1,0 +1,453 @@
+.button--primary {
+    color: stencilColor("button--primary-color");
+    &:hover, &:focus, &:active {
+        color: stencilColor("button--primary-color");
+    }
+    @media (min-width: 1025px) {
+        &:hover, &:focus, &:active {
+            color: stencilColor("button--primary-colorHover");
+        }
+    }
+}
+
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+	background-color: #6e6e6e;
+}
+
+.themevale_open-Cart .themevale_MobileCart{
+    z-index: 0 !important;
+}
+
+.page-type-cart .loadingOverlay{display:none !important;}
+
+/* Sticky Notification Bar */
+.sticky-notification {
+    --border-radius: 30px;
+    --translate-x: -50%;
+    --translate-y: 50px;
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(var(--translate-x)) translateY(var(--translate-y));
+    pointer-events: none;
+    opacity: 0;
+    width: max-content;
+    max-width: 90%;
+    z-index: 999;
+    transition: all 450ms ease-in-out, opacity 600ms ease-in-out;
+    background: stencilColor("halo_sticky_notification_bar_bg_color");
+    padding: 16px 50px;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    animation: vertical-floating 1.5s ease-out infinite;
+    animation-delay: 3s;
+    transform-origin: 50% 50%;
+    overflow: initial;
+    will-change: transform;
+    &.show {
+         --translate-y: 0;
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .text-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .intro-text {
+            color: stencilColor("halo_sticky_notification_bar_color");
+            font-size: 14px;
+            font-weight: 400;
+            transition: color 350ms ease-in-out;
+            &:hover {
+                color: stencilColor("halo_sticky_notification_bar_color");
+            }
+        }
+        .link-text {
+            color: stencilColor("halo_sticky_notification_bar_color");
+            font-size: 14px;
+            font-weight: 400;
+            transition: color 350ms ease-in-out, fill 350ms ease-in-out;
+            &:hover {
+                color: stencilColor("halo_sticky_notification_bar_color");
+            }
+        }
+        .intro-text-desktop {
+            display: block;
+        }
+        .link-text-desktop {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-left: 6px;
+            &:hover {
+                .icon {
+                    transform: translateX(4px);
+                }
+            }
+        }
+        .intro-text-mobile {
+            display: none;
+        }
+        .link-text-mobile {
+            display: none;
+        }
+    }
+    .close-btn {
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #fff;
+        font-weight: 300;
+        margin-top: -2px;
+        svg {
+            width: 16px;
+            height: 16px;
+            fill: stencilColor("halo_sticky_notification_bar_color");
+        }
+        path {
+            fill: stencilColor("halo_sticky_notification_bar_color");
+        }
+    }
+    .icon-link-arrow {
+        width: 20px;
+        height: 20px;
+        fill: stencilColor("halo_sticky_notification_bar_color");
+        svg {
+            fill: stencilColor("halo_sticky_notification_bar_color");
+        }
+        rect {
+            fill: stencilColor("halo_sticky_notification_bar_color");
+        }
+        path {
+            fill: stencilColor("halo_sticky_notification_bar_color");
+        }
+    }
+    .link-text {
+        &:hover {
+            .icon-link-arrow {
+                fill: stencilColor("halo_sticky_notification_bar_color");
+                rect {
+                    fill: stencilColor("halo_sticky_notification_bar_color");
+                }
+                path {
+                    fill: stencilColor("halo_sticky_notification_bar_color");
+                }
+            }
+        }
+    }
+    .mobile-image-icon {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .sticky-notification {
+        --bottom-arrow-size: 7px;
+        --bottom-positon: 66px;
+        bottom: 15px;
+    }
+    #notification-popup {
+        width: 80vw;
+        max-width: unset;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .sticky-notification {
+        padding: 10px 20px;
+        &.hidden-mobile {
+            display: none;
+        }
+        .close-btn {
+            display: none;
+        }
+        .mobile-image-icon {
+            display: block;
+            width: 18px;
+            height: 18px;
+            position: relative;
+            top: -5px;
+            &:first-of-type {
+                margin-right: 5px;
+            }
+            &:nth-of-type(2) {
+                margin-left: 5px;
+            }
+        }
+        .text-wrapper {
+            flex-direction: column;
+            height: 22px;
+            justify-content: flex-start;
+            overflow: hidden;
+            .intro-text-mobile {
+                transition: transform 500ms ease-out;
+            }
+            a {
+                transition: transform 500ms ease-out;
+            }
+            .intro-text-desktop {
+                display: none;
+            }
+            .link-text-desktop {
+                display: none;
+            }
+            .intro-text-mobile {
+                display: block;
+            }
+            .link-text-mobile {
+                display: block;
+            }
+        }
+        .text-wrapper.slide-down {
+            .intro-text-mobile {
+                transform: translateY(-100%);
+            }
+            a {
+                transform: translateY(-100%);
+            }
+        }
+    }
+    .sticky-notification.hide-on-mobile {
+        display: none;
+    }
+    .sticky-notification.temporary-hide {
+        opacity: 0;
+        --translate-y: -20px;
+        pointer-events: none;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .sticky-notification.hidden-desktop {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 1025px) {
+    .sticky-notification {
+        &::after {
+            content: "";
+            z-index: -1;
+            background-color: hsla(0,0%,100%,.2);
+            position: absolute;
+            top: -50%;
+            bottom: -50%;
+            left: -10%;
+            width: 3em;
+            -webkit-transform: rotate(35deg);
+            transform: rotate(35deg);
+            visibility: hidden;
+        }
+    }
+}
+
+@keyframes vertical-floating {
+    0%, 100% {
+        transform: translateX(var(--translate-x)) translateY(0);
+    }
+    
+    50% {
+        transform: translateX(var(--translate-x)) translateY(6px);
+    }   
+}       
+
+@keyframes shineToRight {
+    100% {
+        left: 110%;
+        visibility: visible;
+    }
+}
+
+// wishlist
+
+.wishlist-menu {
+    font-size: $fontSize-root;
+    margin-left: 0;
+    position: absolute;
+    right: 0;
+    top: auto;
+    min-width: 250px;
+    background-color: #ffffff;
+    transition: all 0.5s ease-in-out;
+    user-select: none;
+    pointer-events: none;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 326px;
+    background-color: $color-white;
+    box-shadow: 0px 1px 20px 0px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+
+    &:before {
+        content: '';
+        height: 50px;
+        width: 50px;
+        border: none;
+        display: block;
+        opacity: 0;
+        visibility: hidden;
+        margin: 0 auto;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        background-image: url("../img/loading.svg");
+        z-index: 105;
+        background-repeat: no-repeat;
+        transform: translateY(-50%) rotate(0);
+        transform-style: preserve-3d;
+    }
+
+    &:after {
+        content: '';
+        display: block;
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, .9);
+        transition: all 250ms ease-out;
+        top: 0;
+        left: 0;
+        z-index: 104;
+    }
+    
+    &.is-loading {
+        min-height: 50px;
+        &:before {
+            opacity: 1;
+            visibility: visible;
+        }
+        &:after {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    li {
+        display: block;
+        padding: 0 20px;
+
+        &:first-child {
+            padding-top: 10px;
+        }
+
+        &:last-child {
+            padding-bottom: 10px;
+        }
+    }
+
+    .js-add-to-wishlist,
+    a {
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+        text-decoration: none;
+        display: inline-flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &.in-wishlist {
+            span {
+                color: $color-textLink-hover;
+                background-position: bottom 0 left 0;
+                background-size: 100% 1px, 100% 1px;
+            }
+
+            .wishlist-item-close {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+
+    .wishlist-item-close {
+        width: 20px;
+        height: 20px;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &.animated--out {
+        max-height: 0;
+        transition: max-height 0.5s ease-out;
+        animation: fadeOut 0.5s cubic-bezier(0, 0, .3, 1) forwards;
+    }
+
+    &.animated {
+        user-select: auto;
+        pointer-events: auto;
+        max-height: 200px;
+        transition: max-height 0.5s ease-in;
+        animation: fadeIn 0.5s cubic-bezier(0, 0, .3, 1) forwards;
+    }
+}
+.productView--quickView{
+    .form-action{
+        .button{
+            width: 100% !important;
+        }
+    }
+}
+.forgot-password-form{
+    .form-label{
+        small{
+            float: none;
+        }
+    }
+}
+.paypal-buttons > iframe.component-frame{
+    z-index: 1 !important;
+}
+
+#checkout-app .dropdownMenu .instrumentSelect-dropdownMenu{
+    width: 100% !important;
+    max-width: 100% !important;
+}
+#checkout-app .paymentProviderHeader-nameContainer{
+    position:relative !important;
+    top:6px !important;
+}
+#checkout-app .paymentMethod{
+    width:100% !important;
+}
+#checkout-app .form-input {
+    height:38px !important
+}
+
+#checkout-app .icon.cardIcon-icon.icon--medium {
+    height: 2.7692307692rem;
+    width: 2.7692307692rem;
+}
+#checkout-app .form-body {
+    background-color: inherit !important;
+    border: inherit !important;
+    box-shadow: inherit !important;
+    margin-bottom: inherit !important;
+    max-width: inherit !important;
+    padding: inherit !important;
+}
+#checkout-app .button:hover,
+#checkout-app .button:focus,
+#checkout-app .button.is-active,
+#checkout-app .button.active {
+    background-color: inherit!important;
+    border-color: inherit!important;
+    color: inherit!important;
+}
+#checkout-app .form-fieldset {
+    margin-bottom: 1.5rem !important;
+}

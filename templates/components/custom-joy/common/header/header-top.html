@@ -1,0 +1,29 @@
+
+<div class="joy-header-top">
+    <div class="container"> 
+        <div class="joy-header-top-wrapper"> 
+            <ul class="joy-header-top-items">
+                <li class="joy-header-top-item">
+                    {{#if customer}}
+                        <a class="joy-header-top-link navUser-action" href="{{urls.account.index}}"><strong>{{customer.name}}.</strong></a>
+                        <a class="joy-header-top-link navUser-action" href="{{urls.auth.logout}}">{{lang 'common.logout'}}</a>
+                    {{else}}
+                        <a class="joy-header-top-link navUser-action" href="{{base_url}}/login.php" data-login-form>{{lang 'common.login2'}}</a> 
+                    {{/if}}
+                </li>
+                <li class="joy-header-top-item">
+                    <a class="joy-header-top-link" href="https://thejoyfactory.com/support/">Support</a>
+                </li>
+                <li class="joy-header-top-item">
+                    <div class="joy-language-dropdown">
+                        <span class="joy-header-top-link lang">Global | English ▼</span>
+                        <ul class="joy-language-options">
+                            <li><a href="https://thejoyfactory.com.tw/">Taiwan</a></li>
+                        </ul>
+                    </div>
+                </li> 
+            </ul>
+        </div>
+    </div>
+</div>
+

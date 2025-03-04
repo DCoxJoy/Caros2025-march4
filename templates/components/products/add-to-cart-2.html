@@ -1,0 +1,163 @@
+<div id="add-to-cart-wrapper-2" {{#unless product.can_purchase}}style="display: none"{{/unless}}>
+    {{#if theme_settings.show_product_quantity_box}}
+        <div class="form-field form-field--increments">
+            <label class="form-label form-label--alternate"
+                   for="qty[]">{{lang 'products.quantity'}}</label>
+                <div class="form-increment" data-quantity-change>
+                    <button class="button button--icon" data-action="dec">
+                        <span class="is-srOnly">{{lang 'products.quantity_decrease'}}</span>
+                        <i class="icon" aria-hidden="true">
+                            <svg>
+                                <use xlink:href="#icon-keyboard-arrow-down"/>
+                            </svg>
+                        </i>
+                    </button>
+                    <input class="form-input form-input--incrementTotal one"
+                           id="qty[]"
+                           name="qty[]"
+                           type="tel"
+                           value="{{#if product.min_purchase_quantity}}{{product.min_purchase_quantity}}{{else}}1{{/if}}"
+                           data-quantity-min="{{product.min_purchase_quantity}}"
+                           data-quantity-max="{{product.max_purchase_quantity}}"
+                           min="1"
+                           pattern="[0-9]*"
+                           aria-live="polite">
+                    <button class="button button--icon" data-action="inc">
+                        <span class="is-srOnly">{{lang 'products.quantity_increase'}}</span>
+                        <i class="icon" aria-hidden="true">
+                            <svg>
+                                <use xlink:href="#icon-keyboard-arrow-up"/>
+                            </svg>
+                        </i>
+                    </button>
+                </div>
+        </div>
+    {{/if}}
+
+    <div class="alertBox productAttributes-message" style="display:none">
+        <div class="alertBox-column alertBox-icon">
+            <icon glyph="ic-success" class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg></icon>
+        </div>
+        <p class="alertBox-column alertBox-message"></p>
+    </div>
+    {{#or customer (if theme_settings.restrict_to_login '!==' true)}}
+        <div class="form-action">
+            <input id="form-action-addToCart" data-wait-message="{{lang 'products.adding_to_cart'}}" class="button button--primary" type="submit"
+                value="{{#if product.pre_order}}{{lang 'products.pre_order'}}{{else}}{{lang 'products.add_to_cart'}}{{/if}}" {{#if product.can_purchase}}{{else}}disabled {{/if}}>
+        </div>
+         {{{snippet 'product_addtocart'}}}
+    {{/or}}
+</div>
+{{#or customer (unless settings.hide_price_from_guests)}}
+    {{#if theme_settings.halo_buy_it_now}}
+        <div class="productView-actions productView-actions--buyItNow">
+            <div class="form-action form-action--buyItNow">
+                <input id="form-action-buyItNow" data-wait-message="{{lang 'products.adding_to_cart'}}" class="button button--primary button--buyItNow" type="submit"
+                value="{{lang 'products.buy_it_now'}}">
+            </div>
+        </div>
+    {{/if}}
+{{/or}}
+{{#or customer (unless settings.hide_price_from_guests)}}
+    {{#if wallet_buttons}}
+        <div class="add-to-cart-wallet-buttons your-class-for-wallet-buttons-list" data-add-to-cart-wallet-buttons>
+            {{{wallet_buttons}}}
+        </div>
+        <script type="text/javascript">
+            function updateProductDetailsData(form) {
+                const productDetails = {};
+                const formData = new FormData(form);
+        
+                for (const [fieldName, fieldValue] of formData) {
+                    if (fieldName === 'product_id') {
+                        productDetails.productId = Number(fieldValue);
+                    }
+        
+                    if (fieldName === 'qty[]') {
+                        productDetails.quantity = Number(fieldValue);
+                    }
+        
+                    if (fieldName.match(/attribute/)) {
+                    const productOption = {
+                        optionId: Number(fieldName.match(/\d+/g)[0]),
+                        optionValue: fieldValue,
+                    };
+        
+                    productDetails.optionSelections = productDetails?.optionSelections
+                        ? [...productDetails.optionSelections, productOption]
+                        : [productOption];
+                    }
+                }
+        
+                document.dispatchEvent(new CustomEvent('onProductUpdate', {
+                    bubbles: true,
+                    detail: { productDetails },
+                }));
+            }
+        
+            function resetProductDetailsData() {
+                const productDetails = {};
+        
+                document.dispatchEvent(new CustomEvent('onProductUpdate', {
+                    bubbles: true,
+                    detail: { productDetails },
+                }));
+            }
+        
+            function init() {
+                const form = document.querySelector('form[data-cart-item-add]');
+                const submitButton = form.querySelector('input[type="submit"]');
+                const walletButtonsContainer = document.querySelector('[data-add-to-cart-wallet-buttons]');
+        
+                if (!walletButtonsContainer) {
+                    return;
+                }
+        
+                const submitObserver = new MutationObserver(((mutations) => {
+                    mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes') {
+                        if (!mutation.target.disabled && form.checkValidity()) {
+                            walletButtonsContainer.style.display = 'block';
+                            updateProductDetailsData(form);
+                        } else {
+                            walletButtonsContainer.style.display = 'none';
+                            resetProductDetailsData();
+                        }
+                    }
+                    });
+                }));
+        
+                submitObserver.observe(submitButton, { attributes: true });
+        
+                form.addEventListener('click', () => {
+                    setTimeout(() => updateProductDetailsData(form), 0);
+                });
+        
+                form.addEventListener('change', () => {
+                    if (form.checkValidity() && !submitButton.disabled) {
+                        walletButtonsContainer.style.display = 'block';
+                        updateProductDetailsData(form);
+                    } else {
+                        walletButtonsContainer.style.display = 'none';
+                        resetProductDetailsData();
+                    }
+                });
+        
+                form.addEventListener('touchend', () => {
+                    setTimeout(() => updateProductDetailsData(form), 0);
+                });
+        
+                form.addEventListener('keyup', () => updateProductDetailsData(form));
+        
+                if (form.checkValidity() && !submitButton.disabled) {
+                    updateProductDetailsData(form);
+                } else {
+                    walletButtonsContainer.style.display = 'none';
+                    resetProductDetailsData();
+                }
+            }
+            init();
+        </script>
+    {{/if}}
+{{/or}}
+

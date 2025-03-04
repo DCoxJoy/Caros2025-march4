@@ -1,0 +1,47 @@
+<ul class="breadcrumbs">
+    {{#unless theme_settings.hide_breadcrumbs }}
+        <li class="breadcrumb">
+            <a href="https://thejoyfactory.com/" class="breadcrumb-label" itemprop="item">
+                <span itemprop="name">Home</span>
+            </a>
+            <meta itemprop="position" content="1" />
+        </li>
+        {{#each breadcrumbs}}
+            {{#unless @first}} <!-- Skip the first breadcrumb to avoid duplicate Home -->
+            <li class="breadcrumb {{#if @last}}is-active{{/if}}">
+                {{#or @last (if url "==" null)}}
+                    <meta itemprop="item" content="{{url}}">
+                    <span class="breadcrumb-label" itemprop="name">{{name}}</span>
+                {{else}}
+                    <a href="{{url}}" class="breadcrumb-label" itemprop="item">
+                        <span itemprop="name">{{name}}</span>
+                    </a>
+                {{/or}}
+                <meta itemprop="position" content="{{add @index 1}}" />
+            </li>
+            {{/unless}}
+        {{/each}}
+    {{/unless}}
+</ul>
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement":
+        [
+            {{#each breadcrumbs}}
+            {
+                "@type": "ListItem",
+                "position": {{add @index 1}},
+                "item": {
+                    "@id": {{{JSONstringify url}}},
+                    "name": {{{JSONstringify name}}}
+                }
+            }{{#unless @last}},{{/unless}}
+            {{/each}}
+        ]
+    }
+</script>

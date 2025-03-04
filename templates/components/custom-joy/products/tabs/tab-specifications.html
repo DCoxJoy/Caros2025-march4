@@ -1,0 +1,40 @@
+<div class="product_details">
+    <div class="product_details_inner row">
+        <div class="product_desc_image col-5">
+            {{#if product.images.[9]}} 
+                <img class="lazyload"
+                    data-sizes="auto"
+                    src="{{cdn 'img/loading.svg'}}"
+                    data-src="{{getImage product.images.[9] 'product_size' (cdn theme_settings.default_image_product)}}"
+                    alt="{{product.main_image.alt}}" title="{{product.main_image.alt}}" data-main-image>
+                
+                {{else}} 
+                    <img class="lazyload"
+                    data-sizes="auto"
+                    src="{{cdn 'img/loading.svg'}}"
+                    data-src="{{getImage (last product.images) 'product_size' (cdn theme_settings.default_image_product)}}"
+                    alt="{{product.main_image.alt}}" title="{{product.main_image.alt}}" data-main-image>
+                 
+            {{/if}}
+        </div>
+
+        <div class="product_desc_content col-6">  
+            <p class="short-description">
+                {{#eachIndex (split product.description '&lt;!-- split --&gt;')}}
+                {{#if index '==' '3' }}
+                {{{item}}}
+                {{/if}}
+                {{/eachIndex}}
+            </p>
+        </div>
+    </div>
+   
+   </div>
+  <script>
+    const imageData = '{{getImage product.images.[9]}}'// get image data for index 9
+    const imageDataString = JSON.stringify(imageData) // convert image data to string
+    console.log(imageData) // output stringified image data
+  </script>
+    
+  
+    

@@ -1,0 +1,200 @@
+.custom_joy_footer_main { 
+    .container {
+        width: 90%;
+        max-width: 90%;
+        padding: 0 10px;
+
+        @include media('laptop') {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 20px;
+        }
+    }
+}
+
+
+
+.custom_joy_footer { 
+    @include display-flex;
+    column-gap: 20px;
+    padding: 70px 0 73px;
+    @include media('laptop') { 
+        padding: 50px 0;
+    }
+    @include media('mobile') { 
+        flex-wrap: wrap;
+        row-gap: 30px;
+        column-gap: 0;
+        padding: 40px 0;
+    }
+} 
+
+
+.custom-joy-copyright {
+    text-align: center;
+    padding:  0 0 20px;
+    p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1;
+        @include media('mobile') {  
+            line-height: 20px;
+        }
+    }
+}
+
+.joy_footer_column {
+    padding: 0 10px;
+    @include media('laptop') {
+        padding: 0;
+    }
+
+    &.joy_footer_column1 {
+        width: 26.491%;
+        margin-right: 50px;
+        @include media('laptop') {
+            margin-right: 0;
+        }
+        @include media('mobile') { 
+            width: 100%;
+        }
+    }   
+
+    &.joy_footer_column2 {
+        width: 22.105%;
+        @include media('mobile') { 
+            width: 50%;
+        }
+        @include media('xs-mobile') { 
+            width: 100%;
+        }
+    }
+
+    &.joy_footer_column3 {
+        width: 24.299%;
+        @include media('mobile') { 
+            width: 50%;
+        }
+        @include media('xs-mobile') { 
+            width: 100%;
+        }
+    }
+
+    &.joy_footer_column4 {
+        width: 24.299%;
+        @include media('mobile') { 
+            width: 50%;
+        }
+        @include media('xs-mobile') { 
+            width: 100%;
+        }
+    }
+
+    &.joy_footer_column5 {
+        width: 27.105%;
+        @include media('mobile') { 
+            width: 50%;
+        }
+        @include media('xs-mobile') { 
+            width: 100%;
+        }
+    }
+
+    .joy_footer_menu_items {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        .joy_footer_menu_item {
+            
+            + .joy_footer_menu_item {
+                margin-top: 6px;
+            }
+
+            a, .joy_footer_menu_item_text  {
+                font-size: 18px;
+                line-height: 28.8px;
+                color: #F5F3F4;
+                display: inline-block;
+                @include media('laptop') { 
+                    font-size: 16px;
+                    line-height: 24px;
+                }
+                @include media('laptop') { 
+                    font-size: 14px;
+                    line-height: 20px;
+                }
+            }
+            a { 
+                .joy_footer_menu_item_text {
+                    &:hover {
+                        color: #d3d3d3;
+                    }
+                }
+                
+            }
+        }
+    }
+
+    .footer_column_heading {
+        font-size: 18px;
+        line-height: 1;
+        font-weight: 600;
+        color: #f5f3f4;
+        text-transform: capitalize;
+        margin: 0 0 20px;
+        @include media('laptop') { 
+            font-size: 16px; 
+            margin: 0 0 12px;
+        }
+    }
+
+    .footer_logo {
+        max-width: 315px;
+        margin-bottom: 18px;
+        @include media('xs-mobile') {  
+            max-width: 260px;
+        }
+    }
+
+    .social_icons_wrapper {
+        @include display-flex;
+        @include align-items(center);
+        column-gap: 20px;
+        margin-top: 20px;
+
+        .screen-read-only {
+            display: none;
+        }
+
+        .social_icon_item_link {
+            &:hover {
+                opacity: 0.75;
+            }
+        }
+
+        .social_icon {
+            width: 20px;
+            path {
+                fill: #fff;
+            }
+        }
+
+    }
+
+    
+    .footer_logo_text {
+        max-width: 223px;
+        h4 {
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 29px;
+            color: #f5f3f4;
+            margin: 0;
+            @include media('laptop') {
+                font-size: 16px;
+                line-height: 24px;
+            }
+        }
+    }
+
+}
