@@ -249,25 +249,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function() {
     /*******************************************
-     * 1) PDP Logic (product-view.html style)
+     * 1) PDP Logic (for product detail pages)
      *******************************************/
     const pdpIndicator = document.querySelector(".productView-details");
     if (pdpIndicator) {
         console.log("PDP detected via .productView-details; running PDP logic.");
 
-        // (A) Force product_sheet button to display if it exists
+        // Force product_sheet button to display if it exists.
         const productSheetButton = document.querySelector("#product_sheet");
         if (productSheetButton) {
             productSheetButton.style.display = "block";
             console.log("Forcing #product_sheet button to display on PDP.");
         }
 
-        // (B) Special Statuses
+        // Special status handling on PDP
         const requestQuoteBtn = document.querySelector(".request-quote-button");
         const comingSoonBtn = document.querySelector(".coming-soon-button");
         const discontinuedMsg = document.querySelector(".discontinued-message");
 
-        // Request a Quote or Discontinued → Hide cart buttons
         if (requestQuoteBtn || discontinuedMsg) {
             const addToCartBtn = document.querySelector("#form-action-addToCart");
             const buyItNowBtn = document.querySelector("#form-action-buyItNow");
@@ -279,9 +278,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 buyItNowBtn.style.display = "none";
                 console.log("Hiding Buy It Now on PDP (Request a Quote or Discontinued).");
             }
-        }
-        // Coming Soon → Hide cart buttons & ensure product_sheet is visible
-        else if (comingSoonBtn) {
+        } else if (comingSoonBtn) {
             const addToCartBtn = document.querySelector("#form-action-addToCart");
             const buyItNowBtn = document.querySelector("#form-action-buyItNow");
             if (addToCartBtn) {
@@ -299,25 +296,19 @@ document.addEventListener("DOMContentLoaded", function() {
         } else {
             console.log("No special status detected on PDP; default buttons remain.");
         }
-
-        // Return immediately → skip listing-page logic
-        return;
+        return; // Skip listing logic on PDP
     }
 
     /*******************************************
-     * 2) Listing Page Logic (for categories, search, etc.)
+     * 2) Listing Page Logic (for categories, search, all-products)
      *******************************************/
     console.log("Listing page detected; running extreme product logic.");
 
-    /**
-     * Replaces "Add to Cart" with "Learn More" for products with data-is-extreme="true"
-     */
     function updateExtremeButtons() {
         const extremeCards = document.querySelectorAll('article.card[data-is-extreme="true"]');
         extremeCards.forEach(card => {
             const productLinkEl = card.querySelector('.product_img_link');
             if (!productLinkEl) return;
-            
             const productUrl = productLinkEl.href;
             const atcButtons = card.querySelectorAll('.themevale_btnATC');
             atcButtons.forEach(button => {
@@ -331,16 +322,14 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("updateExtremeButtons() executed on listing page.");
     }
 
-    // Run listing logic immediately
+    // Run listing logic immediately on DOM load
     updateExtremeButtons();
 
     /*******************************************
      * 3) MutationObservers for dynamically added products
      *******************************************/
-
-    // (A) If your theme uses #faceted-search-container for dynamic search/pagination
-    const productContainer = document.getElementById('faceted-search-container');
-    if (productContainer) {
+    const facetedContainer = document.getElementById('faceted-search-container');
+    if (facetedContainer) {
         const observer = new MutationObserver(mutations => {
             let newNodes = false;
             mutations.forEach(mutation => {
@@ -352,12 +341,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateExtremeButtons();
             }
         });
-        observer.observe(productContainer, { childList: true, subtree: true });
+        observer.observe(facetedContainer, { childList: true, subtree: true });
     } else {
-        console.warn('faceted-search-container not found. Listing updates may not apply to new products.');
+        console.warn('No #faceted-search-container found. Faceted observer not set.');
     }
 
-    // (B) If newly added products go into a UL/OL with class "productGrid"
     const productGrid = document.querySelector('.productGrid');
     if (productGrid) {
         const observer2 = new MutationObserver(mutations => {
@@ -379,16 +367,46 @@ document.addEventListener("DOMContentLoaded", function() {
     /*******************************************
      * 4) "Show More" Button Click Handler
      *******************************************/
-    // Adjust this selector to match your actual "Show More" button
     const showMoreBtn = document.querySelector(".button--secondary.button--lg[href^='javascript:void(0)']");
     if (showMoreBtn) {
         showMoreBtn.addEventListener("click", () => {
             console.log("Show More button clicked...");
-            // Wait a bit for new items to load
             setTimeout(() => {
                 updateExtremeButtons();
                 console.log("updateExtremeButtons() called after Show More click.");
-            }, 1500); // Adjust timing if needed
+            }, 1500); // Adjust delay as needed
         });
     }
+
+    /*******************************************
+     * 5) Responsive Handling on Window Load, Resize & Orientation Change
+     *******************************************/
+    // Run updateExtremeButtons() on window load if on a small screen
+    window.addEventListener("load", function() {
+        if (window.innerWidth < 768) {
+            console.log("Window loaded on small screen; re-running updateExtremeButtons().");
+            setTimeout(() => {
+                updateExtremeButtons();
+            }, 2000);
+        }
+    });
+
+    // Debounce function for responsive changes
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    window.addEventListener('resize', debounce(() => {
+        console.log("Window resized; re-running updateExtremeButtons().");
+        updateExtremeButtons();
+    }, 500));
+
+    window.addEventListener('orientationchange', () => {
+        console.log("Orientation changed; re-running updateExtremeButtons() after delay.");
+        setTimeout(updateExtremeButtons, 1000);
+    });
 });
