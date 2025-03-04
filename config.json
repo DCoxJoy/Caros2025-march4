@@ -679,9 +679,7 @@
     "afterpay-button-color": "black-mint",
     "amazon-button-color": "Gold",
     "masterpass-button-color": "black",
-    "paymentbuttons-provider-sorting": [
-
-    ]
+    "paymentbuttons-provider-sorting": []
   },
   "read_only_files": [
     "/assets/scss/components/citadel",
@@ -728,8 +726,7 @@
           "home_garden"
         ]
       },
-      "images": {
-      },
+      "images": {},
       "settings": {
         "homepage_images_mobile-0": "slide-mobile-1.jpg",
         "homepage_images_mobile-1": "slide-mobile-2.jpg",
@@ -1399,8 +1396,7 @@
           "home_garden"
         ]
       },
-      "images": {
-      },
+      "images": {},
       "settings": {
         "themevale_homepage_layout": "homepage layout 2",
         "themevale_homepage_2": true,
@@ -1488,9 +1484,7 @@
         "afterpay-button-color": "black-mint",
         "amazon-button-color": "Gold",
         "masterpass-button-color": "black",
-        "paymentbuttons-provider-sorting": [
-
-        ]
+        "paymentbuttons-provider-sorting": []
       }
     },
     {
@@ -1520,8 +1514,7 @@
           "home_garden"
         ]
       },
-      "images": {
-      },
+      "images": {},
       "settings": {
         "themevale_homepage_layout": "homepage layout 3",
         "themevale_homepage_3": true,
@@ -1633,9 +1626,7 @@
         "afterpay-button-color": "black-mint",
         "amazon-button-color": "Gold",
         "masterpass-button-color": "black",
-        "paymentbuttons-provider-sorting": [
-
-        ]
+        "paymentbuttons-provider-sorting": []
       }
     }
   ]
