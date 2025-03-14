@@ -322,8 +322,28 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("updateExtremeButtons() executed on listing page.");
     }
 
+    /**
+     * Hide the price if the numeric price is 2999 or higher.
+     * This function assumes that the price is displayed within the element
+     * that has the class .card-price and the attribute data-test-info-type="price".
+     */
+    function hidePriceIfHigh() {
+        const priceElements = document.querySelectorAll('.card-price[data-test-info-type="price"]');
+        priceElements.forEach(elem => {
+            let priceText = elem.textContent.trim();
+            // Remove any characters except numbers and the decimal point
+            let numericPrice = parseFloat(priceText.replace(/[^0-9\.]+/g, ''));
+            console.log("Raw price text:", priceText, "Parsed price:", numericPrice);
+            if (!isNaN(numericPrice) && numericPrice >= 2599) {
+                elem.style.display = 'none';
+                console.log("Hiding price as price is high:", numericPrice);
+            }
+        });
+    }
+
     // Run listing logic immediately on DOM load
     updateExtremeButtons();
+    hidePriceIfHigh();
 
     /*******************************************
      * 3) MutationObservers for dynamically added products
@@ -339,6 +359,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             if (newNodes) {
                 updateExtremeButtons();
+                hidePriceIfHigh();
             }
         });
         observer.observe(facetedContainer, { childList: true, subtree: true });
@@ -357,6 +378,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             if (newNodes) {
                 updateExtremeButtons();
+                hidePriceIfHigh();
             }
         });
         observer2.observe(productGrid, { childList: true, subtree: true });
@@ -373,7 +395,8 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("Show More button clicked...");
             setTimeout(() => {
                 updateExtremeButtons();
-                console.log("updateExtremeButtons() called after Show More click.");
+                hidePriceIfHigh();
+                console.log("updateExtremeButtons() and hidePriceIfHigh() called after Show More click.");
             }, 1500); // Adjust delay as needed
         });
     }
@@ -381,12 +404,13 @@ document.addEventListener("DOMContentLoaded", function() {
     /*******************************************
      * 5) Responsive Handling on Window Load, Resize & Orientation Change
      *******************************************/
-    // Run updateExtremeButtons() on window load if on a small screen
+    // Run updateExtremeButtons() and hidePriceIfHigh() on window load if on a small screen
     window.addEventListener("load", function() {
         if (window.innerWidth < 768) {
-            console.log("Window loaded on small screen; re-running updateExtremeButtons().");
+            console.log("Window loaded on small screen; re-running listing logic.");
             setTimeout(() => {
                 updateExtremeButtons();
+                hidePriceIfHigh();
             }, 2000);
         }
     });
@@ -401,12 +425,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     window.addEventListener('resize', debounce(() => {
-        console.log("Window resized; re-running updateExtremeButtons().");
+        console.log("Window resized; re-running listing logic.");
         updateExtremeButtons();
+        hidePriceIfHigh();
     }, 500));
 
     window.addEventListener('orientationchange', () => {
-        console.log("Orientation changed; re-running updateExtremeButtons() after delay.");
-        setTimeout(updateExtremeButtons, 1000);
+        console.log("Orientation changed; re-running listing logic after delay.");
+        setTimeout(() => {
+            updateExtremeButtons();
+            hidePriceIfHigh();
+        }, 1000);
     });
 });
