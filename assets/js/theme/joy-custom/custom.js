@@ -248,6 +248,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", function() {
+
+    /*******************************************
+     * Utility Functions: updateExtremeButtons & hidePriceIfHigh
+     *******************************************/
+    /**
+     * updateExtremeButtons():
+     * Finds article.card[data-is-extreme="true"] and converts "Add to Cart" to "Learn More."
+     */
+    function updateExtremeButtons() {
+        const extremeCards = document.querySelectorAll('article.card[data-is-extreme="true"]');
+        extremeCards.forEach(card => {
+            const productLinkEl = card.querySelector('.product_img_link');
+            if (!productLinkEl) return;
+            const productUrl = productLinkEl.href;
+
+            // Any .themevale_btnATC inside this card
+            const atcButtons = card.querySelectorAll('.themevale_btnATC');
+            atcButtons.forEach(button => {
+                button.textContent = 'Learn More';
+                button.href = productUrl;
+                button.removeAttribute('data-product-id');
+                button.classList.remove('themevale_btnATC');
+                button.addEventListener('click', e => e.stopImmediatePropagation());
+            });
+        });
+        console.log("updateExtremeButtons() executed.");
+    }
+
+    /**
+     * hidePriceIfHigh():
+     * Hides prices if the numeric value is >= 2599.
+     * Looks for .card-price[data-test-info-type="price"] and sets display:none.
+     */
+    function hidePriceIfHigh() {
+        const priceElements = document.querySelectorAll('.card-price[data-test-info-type="price"]');
+        priceElements.forEach(elem => {
+            let priceText = elem.textContent.trim();
+            let numericPrice = parseFloat(priceText.replace(/[^0-9\.]+/g, ''));
+            console.log("Raw price text:", priceText, "Parsed price:", numericPrice);
+
+            if (!isNaN(numericPrice) && numericPrice >= 2599) {
+                elem.style.display = 'none';
+                console.log("Hiding price as price is high:", numericPrice);
+            }
+        });
+    }
+
     /*******************************************
      * 1) PDP Logic (for product detail pages)
      *******************************************/
@@ -296,57 +343,54 @@ document.addEventListener("DOMContentLoaded", function() {
         } else {
             console.log("No special status detected on PDP; default buttons remain.");
         }
-        return; // Skip listing logic on PDP
+
+        /**
+         * 2) Recommended Products Carousel Logic (on PDP)
+         * 
+         * If your theme already initializes slick for .product-related .carousel-content,
+         * remove the .slick() call below. Otherwise, uncomment to init.
+         */
+        jQuery(document).ready(function($) {
+            const $relatedCarousel = $('.product-related .carousel-content');
+            if ($relatedCarousel.length) {
+                // Uncomment if your theme does NOT initialize slick for this carousel
+                // $relatedCarousel.slick({
+                //     slidesToShow: 4,
+                //     slidesToScroll: 1,
+                //     infinite: false,
+                //     arrows: true,
+                //     dots: true
+                // });
+
+                // Run your logic right away for initially visible slides
+                updateExtremeButtons();
+                hidePriceIfHigh();
+
+                // Re-run whenever the carousel changes slides
+                $relatedCarousel.on('init reInit afterChange', function() {
+                    updateExtremeButtons();
+                    hidePriceIfHigh();
+                    console.log("Carousel updated on PDP; re-ran custom logic.");
+                });
+            }
+        });
+
+        // If you do NOT want the listing logic to run on PDP, keep this return.
+        // If you want listing logic too, remove it.
+        return;
     }
 
     /*******************************************
-     * 2) Listing Page Logic (for categories, search, all-products)
+     * 3) Listing Page Logic (for categories, search, etc.)
      *******************************************/
     console.log("Listing page detected; running extreme product logic.");
 
-    function updateExtremeButtons() {
-        const extremeCards = document.querySelectorAll('article.card[data-is-extreme="true"]');
-        extremeCards.forEach(card => {
-            const productLinkEl = card.querySelector('.product_img_link');
-            if (!productLinkEl) return;
-            const productUrl = productLinkEl.href;
-            const atcButtons = card.querySelectorAll('.themevale_btnATC');
-            atcButtons.forEach(button => {
-                button.textContent = 'Learn More';
-                button.href = productUrl;
-                button.removeAttribute('data-product-id');
-                button.classList.remove('themevale_btnATC');
-                button.addEventListener('click', e => e.stopImmediatePropagation());
-            });
-        });
-        console.log("updateExtremeButtons() executed on listing page.");
-    }
-
-    /**
-     * Hide the price if the numeric price is 2999 or higher.
-     * This function assumes that the price is displayed within the element
-     * that has the class .card-price and the attribute data-test-info-type="price".
-     */
-    function hidePriceIfHigh() {
-        const priceElements = document.querySelectorAll('.card-price[data-test-info-type="price"]');
-        priceElements.forEach(elem => {
-            let priceText = elem.textContent.trim();
-            // Remove any characters except numbers and the decimal point
-            let numericPrice = parseFloat(priceText.replace(/[^0-9\.]+/g, ''));
-            console.log("Raw price text:", priceText, "Parsed price:", numericPrice);
-            if (!isNaN(numericPrice) && numericPrice >= 2599) {
-                elem.style.display = 'none';
-                console.log("Hiding price as price is high:", numericPrice);
-            }
-        });
-    }
-
-    // Run listing logic immediately on DOM load
+    // Immediately run listing logic
     updateExtremeButtons();
     hidePriceIfHigh();
 
     /*******************************************
-     * 3) MutationObservers for dynamically added products
+     * MutationObservers for dynamically added products
      *******************************************/
     const facetedContainer = document.getElementById('faceted-search-container');
     if (facetedContainer) {
@@ -383,7 +427,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         observer2.observe(productGrid, { childList: true, subtree: true });
     } else {
-        console.warn('No .productGrid found. "Show More" observer not set.');
+        console.warn('No .productGrid found. ' + '"Show More" observer not set.');
     }
 
     /*******************************************
@@ -397,14 +441,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateExtremeButtons();
                 hidePriceIfHigh();
                 console.log("updateExtremeButtons() and hidePriceIfHigh() called after Show More click.");
-            }, 1500); // Adjust delay as needed
+            }, 1500);
         });
     }
 
     /*******************************************
      * 5) Responsive Handling on Window Load, Resize & Orientation Change
      *******************************************/
-    // Run updateExtremeButtons() and hidePriceIfHigh() on window load if on a small screen
     window.addEventListener("load", function() {
         if (window.innerWidth < 768) {
             console.log("Window loaded on small screen; re-running listing logic.");
@@ -415,7 +458,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Debounce function for responsive changes
+    // Debounce for responsive changes
     function debounce(func, wait) {
         let timeout;
         return function(...args) {
@@ -438,3 +481,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 1000);
     });
 });
+
+
+  
