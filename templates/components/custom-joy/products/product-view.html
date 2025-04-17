@@ -167,9 +167,9 @@
 
 
                 {{#if product.sku '===' 'HTA3021'}}
-                {{!-- For SKU "HTA3021", we do nothing (thus hiding the price) --}}
+                {{!-- No price or button shown for this SKU --}}
             {{else}}
-                {{!-- Call for Price Block --}}
+                {{!-- Regular Call for Price Block --}}
                 {{#if product.call_for_price}}
                     <p class="productView-price">
                         <span>{{product.call_for_price}}</span>

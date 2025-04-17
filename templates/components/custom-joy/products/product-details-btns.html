@@ -1,11 +1,62 @@
-
-    <div class="product-details-btns ">
-        <div class="product-details-btn">
-            <a href="https://thejoyfactory.com/contact-sales/" class="custom-joy-btn transparent-btn">Contact Sales</a>
-        </div>
-            <div class="product-details-btn">
-                    <a href="{{{value}}}"  id="product_sheet" class="custom-joy-btn transparent-btn">Product Sheet</a>
-                </div>
-            
-            
+<div class="product-details-btns">
+    <div class="product-details-btn">
+        <a href="https://thejoyfactory.com/contact-sales/" class="custom-joy-btn transparent-btn">
+            Contact Sales
+        </a>
     </div>
+
+    {{#if product.sku '===' 'HTA3021'}}
+        <div class="product-details-btn">
+            <a class="custom-joy-btn transparent-btn" 
+               href="https://thejoyfactory.com/wp-content/uploads/2025/04/datasheet-HTA3021_Document_TJF.pdf" 
+               target="_blank" 
+               rel="noopener">
+               Product Sheet
+            </a>
+        </div>
+    {{else}}
+        {{#each product.custom_fields}}
+            {{#if name '===' 'temp_sheet_url'}}
+                {{!-- Do nothing, this field exists --}}
+            {{else}}
+                {{#if @last}}
+                    <div class="product-details-btn">
+                        <a href="https://thejoyfactory.com/default-product-sheet.pdf"
+                           id="product_sheet"
+                           class="custom-joy-btn transparent-btn"
+                           target="_blank"
+                           rel="noopener">
+                           Product Sheet
+                        </a>
+                    </div>
+                {{/if}}
+            {{/if}}
+        {{/each}}
+
+        {{!-- No custom fields? Show fallback button --}}
+        {{#unless product.custom_fields.length}}
+            <div class="product-details-btn">
+                <a href="https://thejoyfactory.com/default-product-sheet.pdf"
+                   id="product_sheet"
+                   class="custom-joy-btn transparent-btn"
+                   target="_blank"
+                   rel="noopener">
+                   Product Sheet
+                </a>
+            </div>
+        {{/unless}}
+    {{/if}}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
