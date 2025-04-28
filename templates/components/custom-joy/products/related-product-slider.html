@@ -32,6 +32,9 @@
         }
     ]}'>
     {{#each products}}  
-        {{> components/custom-joy/products/card theme_settings=../theme_settings customer=../customer show_rating=../settings.show_product_rating show_wishlist=../settings.show_wishlist event="list" show_compare=true position=(add @index 1)}}
-    {{/each}}
+    {{> components/custom-joy/products/card theme_settings=../theme_settings customer=../customer show_rating=../settings.show_product_rating show_wishlist=../settings.show_wishlist event="list" show_compare=true position=(add @index 1)}}
+{{/each}}
+  
+
+
 </div>
