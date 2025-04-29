@@ -1,3 +1,4 @@
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/20662622.js"></script>
 <div class="productView joy-productview themevale_productView" data-event-type="product" data-entity-id="{{product.id}}" data-name="{{product.title}}" data-product-category="{{#each product.category}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}" data-product-brand="{{product.brand.name}}" data-product-price="{{#if product.price.with_tax}}{{product.price.with_tax.value}}{{else}}{{product.price.without_tax.value}}{{/if}}" data-product-variant="single-product-option">
     {{#each product.reviews.messages}}
         {{#if error}}
@@ -8,6 +9,9 @@
         {{/if}}
     {{/each}}
     <div class="themevale_productView-left">
+    
+      
+
         <div class="productView-images">
             <div class="themevale_badges">
                 {{#each products.new}}
@@ -127,6 +131,11 @@
                         </h2>
                     {{/if}}
                     <h1 class="productView-title">{{product.title}}</h1>
+
+                   
+                
+
+                    
                 </div>
                 <div class="productView-rating comment">
                     {{#if settings.show_product_rating}} 
