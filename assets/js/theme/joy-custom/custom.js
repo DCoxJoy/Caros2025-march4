@@ -486,24 +486,43 @@ document.addEventListener("DOMContentLoaded", function() {
         /*******************************************
      * 6) Hide Price in Quick View for SKU HTA3021
      *******************************************/
-        const hideQuickViewPriceForSpecificProduct = () => {
+        const hideAndCleanQuickViewElementsForHTA3021 = () => {
             const quickView = document.querySelector('.modal-body.quickView');
             if (!quickView) return;
         
-            // Match against the title in the modal
+            // Temporarily hide the quick view modal to prevent flicker
+            quickView.style.visibility = 'hidden';
+        
             const titleEl = quickView.querySelector('.productView-title');
             if (!titleEl) return;
         
             const productName = titleEl.textContent.trim();
-            
-            // Adjust this to match exactly how your target product's title appears
+        
             if (productName.includes('iPad mini A17 Pro') || productName.includes('HTA3021')) {
+                // Remove price element
                 const priceEl = quickView.querySelector('.price.price--withoutTax');
                 if (priceEl) {
-                    priceEl.style.display = 'none';
-                    console.log('✅ Quick View: Price hidden for HTA3021 product');
+                    priceEl.remove();
+                    console.log('✅ Quick View: Price element removed for HTA3021');
+                }
+        
+                // Remove Add to Cart button
+                const addToCartBtn = quickView.querySelector('#form-action-addToCart');
+                if (addToCartBtn) {
+                    addToCartBtn.remove();
+                    console.log('✅ Quick View: Add to Cart button removed for HTA3021');
+                }
+        
+                // Remove Buy Now button
+                const buyNowBtn = quickView.querySelector('#form-action-buyItNow');
+                if (buyNowBtn) {
+                    buyNowBtn.remove();
+                    console.log('✅ Quick View: Buy Now button removed for HTA3021');
                 }
             }
+        
+            // Show modal content again after cleanup
+            quickView.style.visibility = 'visible';
         };
         
         // Observe modal open
@@ -511,9 +530,13 @@ document.addEventListener("DOMContentLoaded", function() {
             mutations.forEach(mutation => {
                 if (mutation.addedNodes.length) {
                     mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === 1 && node.classList.contains('modal-body') && node.classList.contains('quickView')) {
-                            // Delay slightly to ensure inner content has rendered
-                            setTimeout(hideQuickViewPriceForSpecificProduct, 250);
+                        if (
+                            node.nodeType === 1 &&
+                            node.classList.contains('modal-body') &&
+                            node.classList.contains('quickView')
+                        ) {
+                            // Run cleanup quickly before full rendering
+                            setTimeout(hideAndCleanQuickViewElementsForHTA3021, 50);
                         }
                     });
                 }
@@ -521,9 +544,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         
         modalObserver.observe(document.body, { childList: true, subtree: true });
-         
-    
-
+        
 
 });
 
