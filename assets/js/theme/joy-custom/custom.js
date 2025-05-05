@@ -480,6 +480,51 @@ document.addEventListener("DOMContentLoaded", function() {
             hidePriceIfHigh();
         }, 1000);
     });
+
+
+
+        /*******************************************
+     * 6) Hide Price in Quick View for SKU HTA3021
+     *******************************************/
+        const hideQuickViewPriceForSpecificProduct = () => {
+            const quickView = document.querySelector('.modal-body.quickView');
+            if (!quickView) return;
+        
+            // Match against the title in the modal
+            const titleEl = quickView.querySelector('.productView-title');
+            if (!titleEl) return;
+        
+            const productName = titleEl.textContent.trim();
+            
+            // Adjust this to match exactly how your target product's title appears
+            if (productName.includes('iPad mini A17 Pro') || productName.includes('HTA3021')) {
+                const priceEl = quickView.querySelector('.price.price--withoutTax');
+                if (priceEl) {
+                    priceEl.style.display = 'none';
+                    console.log('✅ Quick View: Price hidden for HTA3021 product');
+                }
+            }
+        };
+        
+        // Observe modal open
+        const modalObserver = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                if (mutation.addedNodes.length) {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === 1 && node.classList.contains('modal-body') && node.classList.contains('quickView')) {
+                            // Delay slightly to ensure inner content has rendered
+                            setTimeout(hideQuickViewPriceForSpecificProduct, 250);
+                        }
+                    });
+                }
+            });
+        });
+        
+        modalObserver.observe(document.body, { childList: true, subtree: true });
+         
+    
+
+
 });
 
 
