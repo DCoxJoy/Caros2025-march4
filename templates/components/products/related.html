@@ -35,10 +35,12 @@
         }
     ]}'>
     {{#each products}}
+    
     <div>
         <div class="productCarousel-slide">
             {{> components/products/card theme_settings=../theme_settings customer=../customer show_rating=../settings.show_product_rating show_wishlist=../settings.show_wishlist event="list" show_compare=true position=(add @index 1)}}
         </div>
     </div>
+   
     {{/each}}
 </div>

@@ -295,6 +295,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+
+
     /*******************************************
      * 1) PDP Logic (for product detail pages)
      *******************************************/
@@ -365,12 +367,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Run your logic right away for initially visible slides
                 updateExtremeButtons();
                 hidePriceIfHigh();
+               
+             
 
                 // Re-run whenever the carousel changes slides
                 $relatedCarousel.on('init reInit afterChange', function() {
                     updateExtremeButtons();
                     hidePriceIfHigh();
-                    console.log("Carousel updated on PDP; re-ran custom logic.");
                 });
             }
         });
@@ -544,6 +547,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         
         modalObserver.observe(document.body, { childList: true, subtree: true });
+
+        
         
 
 });
