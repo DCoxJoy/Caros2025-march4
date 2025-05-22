@@ -276,6 +276,29 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("updateExtremeButtons() executed.");
     }
 
+function forceLearnMoreForRestrictedSkus() {
+    const restrictedMap = {
+        '2154': 'CWM504MP',
+        // Add more IDs + SKUs as needed
+    };
+
+    document.querySelectorAll('article.card[data-product-id]').forEach(card => {
+        const productId = card.dataset.productId;
+        if (!restrictedMap[productId]) return;
+
+        const productUrl = card.querySelector('.product_img_link')?.href || '#';
+
+        const atcButton = card.querySelector('.themevale_btnATC');
+        if (atcButton) {
+            atcButton.textContent = 'Learn More';
+            atcButton.href = productUrl;
+            atcButton.removeAttribute('data-product-id');
+            atcButton.classList.remove('themevale_btnATC');
+            atcButton.addEventListener('click', e => e.stopImmediatePropagation());
+        }
+    });
+}
+
     /**
      * hidePriceIfHigh():
      * Hides prices if the numeric value is >= 2599.
@@ -367,13 +390,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Run your logic right away for initially visible slides
                 updateExtremeButtons();
                 hidePriceIfHigh();
-               
              
 
                 // Re-run whenever the carousel changes slides
                 $relatedCarousel.on('init reInit afterChange', function() {
                     updateExtremeButtons();
                     hidePriceIfHigh();
+                    forceLearnMoreForRestrictedSkus();
                 });
             }
         });
@@ -391,6 +414,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Immediately run listing logic
     updateExtremeButtons();
     hidePriceIfHigh();
+    forceLearnMoreForRestrictedSkus();
 
     /*******************************************
      * MutationObservers for dynamically added products
@@ -407,6 +431,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (newNodes) {
                 updateExtremeButtons();
                 hidePriceIfHigh();
+                forceLearnMoreForRestrictedSkus();
             }
         });
         observer.observe(facetedContainer, { childList: true, subtree: true });
@@ -545,6 +570,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         });
+
+
+
         
         modalObserver.observe(document.body, { childList: true, subtree: true });
 
