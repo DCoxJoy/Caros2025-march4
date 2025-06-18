@@ -582,4 +582,26 @@ function forceLearnMoreForRestrictedSkus() {
 });
 
 
-  
+  //Following javascript code removes &quote;from product filter page
+  document.addEventListener('DOMContentLoaded', function () {
+  const container = document.querySelector('.page');
+  if (!container) return;
+
+  const cleanHeading = function () {
+    const h1 = document.querySelector('.page-heading');
+    if (h1 && h1.textContent.includes('&quot;')) {
+      h1.textContent = h1.textContent.replaceAll('&quot;', '');
+    }
+  };
+
+  // Run once immediately in case it's already there
+  cleanHeading();
+
+  // Set up observer on the container that holds the page heading
+  const observer = new MutationObserver(function () {
+    cleanHeading();
+  });
+
+  observer.observe(container, { childList: true, subtree: true });
+});
+
