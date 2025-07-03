@@ -61,6 +61,12 @@
             <h4 class="card-title">
                 <a href="{{url}}" data-event-type="product-click">{{name}}</a>
             </h4>
+
+            {{#if sku}}
+            <p class="product-sku">SKU: {{sku}}</p>
+            {{/if}}
+
+
             <div class="card-wrapper">
                 <div class="card-price" data-test-info-type="price">
                     {{#or customer (if theme_settings.restrict_to_login '!==' true)}}
