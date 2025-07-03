@@ -276,11 +276,13 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("updateExtremeButtons() executed.");
     }
 
-function forceLearnMoreForRestrictedSkus() {
-    const restrictedMap = {
+    function forceLearnMoreForRestrictedSkus() {
+    /*const restrictedMap = {
         '2154': 'CWM504MP',
         // Add more IDs + SKUs as needed
     };
+    */
+    
 
     document.querySelectorAll('article.card[data-product-id]').forEach(card => {
         const productId = card.dataset.productId;
