@@ -81,6 +81,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    
+
+
+
 });
 
 
@@ -245,9 +250,36 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 100);
 });
 
+function hideHTA3021SearchCardDetails() {
+    const cards = document.querySelectorAll('article.card[data-product-id="2160"]');
+
+    cards.forEach(card => {
+        const priceEl = card.querySelector('.price.price--withoutTax, .card-price[data-test-info-type="price"]');
+        const atcBtn = card.querySelector('a.themevale_btnATC, a.learn-more-link');
+
+        // Clean price
+        if (priceEl && priceEl.style.display !== 'none') {
+            priceEl.style.display = 'none';
+            console.log('✅ HTA3021: Price hidden.');
+        }
+
+        // Clean button
+        if (atcBtn && atcBtn.textContent.trim() !== 'Learn More') {
+            const productUrl = atcBtn.href.split('?')[0].replace('/cart.php', '/product/hta3021');
+            atcBtn.textContent = 'Learn More';
+            atcBtn.setAttribute('href', productUrl);
+            atcBtn.removeAttribute('data-product-id');
+            atcBtn.classList.remove('themevale_btnATC');
+            atcBtn.classList.add('learn-more-link');
+            console.log('✅ HTA3021: Button converted to Learn More.');
+        }
+    });
+}
+
 
 
 document.addEventListener("DOMContentLoaded", function() {
+
 
     /*******************************************
      * Utility Functions: updateExtremeButtons & hidePriceIfHigh
@@ -301,24 +333,47 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 }
 
-    /**
+    
+     /**
      * hidePriceIfHigh():
      * Hides prices if the numeric value is >= 2599.
      * Looks for .card-price[data-test-info-type="price"] and sets display:none.
      */
-    function hidePriceIfHigh() {
-        const priceElements = document.querySelectorAll('.card-price[data-test-info-type="price"]');
-        priceElements.forEach(elem => {
-            let priceText = elem.textContent.trim();
-            let numericPrice = parseFloat(priceText.replace(/[^0-9\.]+/g, ''));
-            console.log("Raw price text:", priceText, "Parsed price:", numericPrice);
+     
+    // function hidePriceIfHigh() {
+    //     const priceElements = document.querySelectorAll('.card-price[data-test-info-type="price"]');
+    //     priceElements.forEach(elem => {
+    //         let priceText = elem.textContent.trim();
+    //         let numericPrice = parseFloat(priceText.replace(/[^0-9\.]+/g, ''));
+    //         console.log("Raw price text:", priceText, "Parsed price:", numericPrice);
 
-            if (!isNaN(numericPrice) && numericPrice >= 2599) {
-                elem.style.display = 'none';
-                console.log("Hiding price as price is high:", numericPrice);
-            }
-        });
-    }
+    //         if (!isNaN(numericPrice) && numericPrice >= 2599) {
+    //             elem.style.display = 'none';
+    //             console.log("Hiding price as price is high:", numericPrice);
+    //         }
+    //     });
+    // }
+
+
+function hidePriceIfHigh() {
+    const priceElements = document.querySelectorAll('.card-price[data-test-info-type="price"]');
+    priceElements.forEach(elem => {
+        let priceText = elem.textContent.trim();
+
+        // Updated: Strip out everything except digits, dots, and commas. Then remove commas for parsing
+        const cleaned = priceText.replace(/[^0-9.,]/g, '').replace(/,/g, '');
+        let numericPrice = parseFloat(cleaned);
+
+        console.log("Raw price text:", priceText, "Cleaned:", cleaned, "Parsed:", numericPrice);
+
+        if (!isNaN(numericPrice) && numericPrice >= 2599) {
+            elem.style.display = 'none';
+            console.log("Hiding price as price is high:", numericPrice);
+        }
+    });
+}
+
+
 
 
 
@@ -417,6 +472,7 @@ document.addEventListener("DOMContentLoaded", function() {
     updateExtremeButtons();
     hidePriceIfHigh();
     forceLearnMoreForRestrictedSkus();
+    hideHTA3021SearchCardDetails();
 
     /*******************************************
      * MutationObservers for dynamically added products
@@ -434,6 +490,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateExtremeButtons();
                 hidePriceIfHigh();
                 forceLearnMoreForRestrictedSkus();
+                hideHTA3021SearchCardDetails();
             }
         });
         observer.observe(facetedContainer, { childList: true, subtree: true });
@@ -450,10 +507,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     newNodes = true;
                 }
             });
-            if (newNodes) {
-                updateExtremeButtons();
-                hidePriceIfHigh();
-            }
+
+           updateExtremeButtons();
+           hidePriceIfHigh();
+           hideHTA3021SearchCardDetails();
+        
         });
         observer2.observe(productGrid, { childList: true, subtree: true });
     } else {
@@ -470,6 +528,7 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => {
                 updateExtremeButtons();
                 hidePriceIfHigh();
+                hideHTA3021SearchCardDetails();
                 console.log("updateExtremeButtons() and hidePriceIfHigh() called after Show More click.");
             }, 1500);
         });
@@ -484,9 +543,12 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => {
                 updateExtremeButtons();
                 hidePriceIfHigh();
+                hideHTA3021SearchCardDetails(); 
             }, 2000);
         }
     });
+
+
 
     // Debounce for responsive changes
     function debounce(func, wait) {
@@ -501,6 +563,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("Window resized; re-running listing logic.");
         updateExtremeButtons();
         hidePriceIfHigh();
+        hideHTA3021SearchCardDetails(); 
     }, 500));
 
     window.addEventListener('orientationchange', () => {
@@ -508,8 +571,24 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => {
             updateExtremeButtons();
             hidePriceIfHigh();
+            hideHTA3021SearchCardDetails(); 
         }, 1000);
     });
+
+
+document.addEventListener('snize:productsUpdated', () => {
+  setTimeout(() => {
+    console.log('⏳ Running delayed re-logic for HTA3021 after Searchanise update');
+    requestAnimationFrame(() => {
+      hideHTA3021SearchCardDetails();
+      updateExtremeButtons();
+      hidePriceIfHigh();
+      forceLearnMoreForRestrictedSkus();
+      console.log('✅ HTA3021 custom logic applied after Searchanise rendering.');
+    });
+  }, 1000); // Try 1500ms if Searchanise is rendering slowly
+});
+
 
 
 
@@ -578,8 +657,8 @@ document.addEventListener("DOMContentLoaded", function() {
         
         modalObserver.observe(document.body, { childList: true, subtree: true });
 
-        
-        
+
+
 
 });
 
