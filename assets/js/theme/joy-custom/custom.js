@@ -308,17 +308,13 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("updateExtremeButtons() executed.");
     }
 
-    function forceLearnMoreForRestrictedSkus() {
-    /*const restrictedMap = {
-        '2154': 'CWM504MP',
-        // Add more IDs + SKUs as needed
-    };
-    */
-    
+
+  function forceLearnMoreForRestrictedSkus() {
+    const restrictedIDs = ['1893','2160', '2163', '2166', '2055', '2089']; // Add all product IDs here
 
     document.querySelectorAll('article.card[data-product-id]').forEach(card => {
         const productId = card.dataset.productId;
-        if (!restrictedMap[productId]) return;
+        if (!restrictedIDs.includes(productId)) return;
 
         const productUrl = card.querySelector('.product_img_link')?.href || '#';
 
@@ -328,31 +324,20 @@ document.addEventListener("DOMContentLoaded", function() {
             atcButton.href = productUrl;
             atcButton.removeAttribute('data-product-id');
             atcButton.classList.remove('themevale_btnATC');
+            atcButton.classList.add('learn-more-link');
             atcButton.addEventListener('click', e => e.stopImmediatePropagation());
+            console.log(`🔁 Product ${productId}: Converted to Learn More`);
+        }
+
+        const priceEl = card.querySelector('.price.price--withoutTax, .card-price[data-test-info-type="price"]');
+        if (priceEl) {
+            priceEl.style.display = 'none';
+            console.log(`💸 Product ${productId}: Price hidden`);
         }
     });
 }
+  
 
-    
-     /**
-     * hidePriceIfHigh():
-     * Hides prices if the numeric value is >= 2599.
-     * Looks for .card-price[data-test-info-type="price"] and sets display:none.
-     */
-     
-    // function hidePriceIfHigh() {
-    //     const priceElements = document.querySelectorAll('.card-price[data-test-info-type="price"]');
-    //     priceElements.forEach(elem => {
-    //         let priceText = elem.textContent.trim();
-    //         let numericPrice = parseFloat(priceText.replace(/[^0-9\.]+/g, ''));
-    //         console.log("Raw price text:", priceText, "Parsed price:", numericPrice);
-
-    //         if (!isNaN(numericPrice) && numericPrice >= 2599) {
-    //             elem.style.display = 'none';
-    //             console.log("Hiding price as price is high:", numericPrice);
-    //         }
-    //     });
-    // }
 
 
 function hidePriceIfHigh() {
@@ -658,6 +643,21 @@ document.addEventListener('snize:productsUpdated', () => {
         modalObserver.observe(document.body, { childList: true, subtree: true });
 
 
+(function persistentFixForHTA3021() {
+  let attempts = 0;
+  const maxAttempts = 10;
+
+  const interval = setInterval(() => {
+    attempts++;
+    hideHTA3021SearchCardDetails();
+    console.log(`⏱ Persistent fix attempt ${attempts} for HTA3021.`);
+
+    if (attempts >= maxAttempts) {
+      clearInterval(interval);
+      console.log("✅ Persistent fix completed for HTA3021.");
+    }
+  }, 1000); // Run every second
+})();
 
 
 });

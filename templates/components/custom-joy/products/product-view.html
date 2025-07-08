@@ -173,29 +173,29 @@
                 </p>
   
 
-
-                {{#if product.sku '===' 'HTA3021'}}
-                {{!-- No price or button shown for this SKU --}}
-            {{else}}
-                {{!-- Regular Call for Price Block --}}
-                {{#if product.call_for_price}}
-                    <p class="productView-price">
-                        <span>{{product.call_for_price}}</span>
-                    </p>
-                {{/if}}
-
-                {{!-- Regular Price Block --}}
-                <div class="productView-price">
-                    {{#or customer (if theme_settings.restrict_to_login '!==' true)}}
-                        {{> components/products/price price=product.price }}
-                    {{else}}
-                        {{> components/common/login-for-pricing}}
-                    {{/or}}
-                    {{#if theme_settings.product_soldProduct}}
-                        <!-- <div class="sold-product"></div> -->
+                    {{#or (if product.sku '===' 'HTA3021') (if product.sku '===' 'HTA6024') (if product.sku '===' 'CWA657MP')(if product.sku '===' 'HPA3024')(if product.sku '===' 'CWA637MP-IS')(if product.sku '===' 'CWM347MP')}}
+                    {{!-- No price or button shown for these restricted SKUs --}}
+                {{else}}
+                    {{!-- Regular Call for Price Block --}}
+                    {{#if product.call_for_price}}
+                        <p class="productView-price">
+                            <span>{{product.call_for_price}}</span>
+                        </p>
                     {{/if}}
-                </div>
-            {{/if}}
+
+                    {{!-- Regular Price Block --}}
+                    <div class="productView-price">
+                        {{#or customer (if theme_settings.restrict_to_login '!==' true)}}
+                            {{> components/products/price price=product.price }}
+                        {{else}}
+                            {{> components/common/login-for-pricing}}
+                        {{/or}}
+                        {{#if theme_settings.product_soldProduct}}
+                            <!-- <div class="sold-product"></div> -->
+                        {{/if}}
+                    </div>
+                {{/or}}
+
 
             
 
