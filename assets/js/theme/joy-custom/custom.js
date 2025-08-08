@@ -691,7 +691,8 @@ function hideQuickViewPriceIfExtremeSeries() {
         if (!existingLearnMore) {
             const titleEl = quickView.querySelector('.productView-title');
             const dataUrl = titleEl?.getAttribute('data-url') || '';
-            const productUrl = dataUrl ? `${window.location.origin}${dataUrl}` : '#';
+            const productUrl = dataUrl.startsWith('http') ? dataUrl : `${window.location.origin}${dataUrl}`;
+
 
             const learnMoreBtn = document.createElement('a');
             learnMoreBtn.href = productUrl;
