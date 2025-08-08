@@ -561,18 +561,51 @@ function hidePriceIfHigh() {
     });
 
 
+// document.addEventListener('snize:productsUpdated', () => {
+//   setTimeout(() => {
+//     console.log('⏳ Running delayed re-logic for HTA3021 after Searchanise update');
+//     requestAnimationFrame(() => {
+//       hideHTA3021SearchCardDetails();
+//       updateExtremeButtons();
+//       hidePriceIfHigh();
+//       forceLearnMoreForRestrictedSkus();
+//       console.log('✅ HTA3021 custom logic applied after Searchanise rendering.');
+//     });
+//   }, 1000); // Try 1500ms if Searchanise is rendering slowly
+// });
+
+
 document.addEventListener('snize:productsUpdated', () => {
-  setTimeout(() => {
-    console.log('⏳ Running delayed re-logic for HTA3021 after Searchanise update');
-    requestAnimationFrame(() => {
-      hideHTA3021SearchCardDetails();
-      updateExtremeButtons();
-      hidePriceIfHigh();
-      forceLearnMoreForRestrictedSkus();
-      console.log('✅ HTA3021 custom logic applied after Searchanise rendering.');
-    });
-  }, 1000); // Try 1500ms if Searchanise is rendering slowly
+    setTimeout(() => {
+        console.log('⏳ Running delayed re-logic after Searchanise update');
+        requestAnimationFrame(() => {
+            hideHTA3021SearchCardDetails();
+            updateExtremeButtons();
+            hidePriceIfHigh();
+            forceLearnMoreForRestrictedSkus();
+            console.log('✅ Searchanise custom logic applied.');
+        });
+    }, 1000);
+
+    // 🧠 Persistent retry loop for mobile
+    let searchFixAttempts = 0;
+    const maxSearchFixAttempts = 10;
+
+    const mobileSearchFixInterval = setInterval(() => {
+        searchFixAttempts++;
+        hideHTA3021SearchCardDetails();
+        updateExtremeButtons();
+        hidePriceIfHigh();
+        forceLearnMoreForRestrictedSkus();
+        console.log(`📱 Mobile search re-patch attempt ${searchFixAttempts}`);
+
+        if (searchFixAttempts >= maxSearchFixAttempts) {
+            clearInterval(mobileSearchFixInterval);
+            console.log("✅ Mobile search persistent fix complete.");
+        }
+    }, 1000);
 });
+
 
 
 
@@ -580,7 +613,7 @@ document.addEventListener('snize:productsUpdated', () => {
         /*******************************************
      * 6) Hide Price in Quick View for SKU HTA3021
      *******************************************/
-        const hideAndCleanQuickViewElementsForHTA3021 = () => {
+       const hideAndCleanQuickViewElementsForHTA3021 = () => {
             const quickView = document.querySelector('.modal-body.quickView');
             if (!quickView) return;
         
@@ -618,6 +651,71 @@ document.addEventListener('snize:productsUpdated', () => {
             // Show modal content again after cleanup
             quickView.style.visibility = 'visible';
         };
+
+      
+
+function hideQuickViewPriceIfExtremeSeries() {
+    const quickView = document.querySelector('.modal-body.quickView');
+    if (!quickView) return;
+
+    quickView.style.visibility = 'hidden';
+
+    const rootProductEl = quickView.querySelector('.productView.themevale_productView');
+    if (!rootProductEl) {
+        quickView.style.visibility = 'visible';
+        return;
+    }
+
+    const productCategory = rootProductEl.getAttribute('data-product-category') || '';
+    const isExtremeSeries = productCategory.includes('Series/Extreme');
+
+    if (isExtremeSeries) {
+        // 💸 Hide price
+        const priceEls = quickView.querySelectorAll(
+            '.productView-price .price, .productView-price .price-section, .productView-price .price-section--withoutTax'
+        );
+        priceEls.forEach(el => {
+            el.style.display = 'none';
+            console.log('💸 Quick View: Price hidden for Extreme series');
+        });
+
+        // 🧼 Remove existing buttons
+        const atc = quickView.querySelector('#form-action-addToCart');
+        if (atc) atc.remove();
+
+        const buyNow = quickView.querySelector('#form-action-buyItNow');
+        if (buyNow) buyNow.remove();
+
+        // ❌ Avoid duplicate Learn More buttons
+        const existingLearnMore = quickView.querySelector('.learn-more-button');
+        if (!existingLearnMore) {
+            const titleEl = quickView.querySelector('.productView-title');
+            const dataUrl = titleEl?.getAttribute('data-url') || '';
+            const productUrl = dataUrl ? `${window.location.origin}${dataUrl}` : '#';
+
+            const learnMoreBtn = document.createElement('a');
+            learnMoreBtn.href = productUrl;
+            learnMoreBtn.textContent = 'Learn More';
+            learnMoreBtn.className = 'button button--primary learn-more-button';
+            learnMoreBtn.style.display = 'inline-block';
+            learnMoreBtn.style.marginTop = '1rem';
+            learnMoreBtn.style.textAlign = 'center';
+
+            const quantityBlock = quickView.querySelector('.productView-options, .productView-details');
+            if (quantityBlock) {
+                quantityBlock.appendChild(learnMoreBtn);
+                console.log('🔗 Quick View: Learn More button added');
+            }
+        } else {
+            console.log('⚠️ Quick View: Learn More button already exists');
+        }
+    }
+
+    quickView.style.visibility = 'visible';
+}
+
+
+
         
         // Observe modal open
         const modalObserver = new MutationObserver((mutations) => {
@@ -630,7 +728,10 @@ document.addEventListener('snize:productsUpdated', () => {
                             node.classList.contains('quickView')
                         ) {
                             // Run cleanup quickly before full rendering
-                            setTimeout(hideAndCleanQuickViewElementsForHTA3021, 50);
+                            setTimeout(() => {
+                                hideAndCleanQuickViewElementsForHTA3021(); // Legacy SKU logic
+                                hideQuickViewPriceIfExtremeSeries(); // New custom field logic
+                                }, 50);
                         }
                     });
                 }
