@@ -275,9 +275,18 @@
 
 
                 {{assignVar "productStatus" "Active"}}
+                {{#if product.custom_fields}}
+                  {{#each product.custom_fields}}
+                    {{#if name '===' 'product_status'}}
+                     {{assignVar "productStatus" value}}
+                    {{/if}}
+                   {{/each}}
+                {{/if}}
+
+
+                {{#unless (if (getVar "productStatus") '===' 'Request for Quote')}}
 
                                 {{#if product.options}}
-                      
                                         {{> components/products/add-to-cart}}
                                     {{else}}
                                         {{#if product.can_purchase}}
@@ -293,14 +302,9 @@
                                             </div>
                                         {{/if}}
                                     {{/if}}
+                                {{/unless}}
                                     
-                                    {{#if product.custom_fields}}
-                                    {{#each product.custom_fields}}
-                                        {{#if name '===' 'product_status'}}
-                                            {{assignVar "productStatus" value}}
-                                        {{/if}}
-                                    {{/each}}
-                                {{/if}}
+                                   
 
                                 {{!-- Show Add to Cart & Buy Now for "Active" --}}
                                 {{#if productStatus '===' 'Active'}}
