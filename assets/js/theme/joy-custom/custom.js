@@ -250,30 +250,71 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 100);
 });
 
-function hideHTA3021SearchCardDetails() {
-    const cards = document.querySelectorAll('article.card[data-product-id="2160"]');
 
-    cards.forEach(card => {
-        const priceEl = card.querySelector('.price.price--withoutTax, .card-price[data-test-info-type="price"]');
-        const atcBtn = card.querySelector('a.themevale_btnATC, a.learn-more-link');
+// ============================
+//  RESTRICTED PRODUCTS CONFIG
+// ============================
+const RESTRICTED_PRODUCTS = {
+  ids: ['2160', '2163', '2166', '2055', '2089', '1893'], // Add/remove as needed
+  skus: ['HTA3021', 'HTA3023', 'HTA6024', 'HPA3024', 'CWM347MP', 'CWA657MP'], // Optional SKU match
+  urlOverrides: {
+    '2160': '/product/hta3021',
+    'HTA3023': '/product/hta3023',
+    'HTA6024': '/product/hta6024',
+    'HPA3024': '/product/hpa3024',
+    'CWM347MP': '/product/cwm347mp',
+    'CWA657MP': '/product/cwa657mp'
+  }
+};
 
-        // Clean price
-        if (priceEl && priceEl.style.display !== 'none') {
-            priceEl.style.display = 'none';
-            console.log('✅ HTA3021: Price hidden.');
-        }
+/**
+ * Hide price + convert ATC to Learn More for multiple products.
+ * Match by product IDs and/or SKUs.
+ */
+function hideSearchCardDetails(cfg = {}) {
+  const idSet   = new Set((cfg.ids  || []).map(String));
+  const skuSet  = new Set((cfg.skus || []).map(String).map(s => s.toUpperCase()));
+  const urlMap  = cfg.urlOverrides || {};
 
-        // Clean button
-        if (atcBtn && atcBtn.textContent.trim() !== 'Learn More') {
-            const productUrl = atcBtn.href.split('?')[0].replace('/cart.php', '/product/hta3021');
-            atcBtn.textContent = 'Learn More';
-            atcBtn.setAttribute('href', productUrl);
-            atcBtn.removeAttribute('data-product-id');
-            atcBtn.classList.remove('themevale_btnATC');
-            atcBtn.classList.add('learn-more-link');
-            console.log('✅ HTA3021: Button converted to Learn More.');
-        }
-    });
+  const cards = document.querySelectorAll('article.card[data-product-id], article.card[data-product-sku]');
+
+  cards.forEach(card => {
+    const pid = (card.getAttribute('data-product-id') || '').trim();
+    const psku = (card.getAttribute('data-product-sku') || '').trim().toUpperCase();
+
+    const isTarget = (pid && idSet.has(pid)) || (psku && skuSet.has(psku));
+    if (!isTarget) return;
+
+    card.classList.add('restricted');
+
+    const priceEl =
+      card.querySelector('.card-price[data-test-info-type="price"]') ||
+      card.querySelector('.price.price--withoutTax') ||
+      card.querySelector('[data-product-price-without-tax]');
+
+    if (priceEl && priceEl.style.display !== 'none') {
+      priceEl.style.display = 'none';
+      console.log(`💸 Price hidden for product ${pid || psku}`);
+    }
+
+    const atcBtn = card.querySelector('a.themevale_btnATC, a.learn-more-link');
+    if (atcBtn) {
+      const productLink = card.querySelector('.product_img_link, a.card-figure__link, a[data-event-type="product-click"]');
+      const inferredUrl = productLink?.href?.split('?')[0] || atcBtn.href?.split('?')[0] || '#';
+      const overrideUrl = urlMap[pid] || urlMap[psku] || inferredUrl;
+      const finalUrl = overrideUrl.replace('/cart.php', '');
+
+      if (atcBtn.textContent.trim() !== 'Learn More' || atcBtn.classList.contains('themevale_btnATC')) {
+        atcBtn.textContent = 'Learn More';
+        atcBtn.href = finalUrl;
+        atcBtn.removeAttribute('data-product-id');
+        atcBtn.classList.remove('themevale_btnATC');
+        atcBtn.classList.add('learn-more-link');
+        atcBtn.addEventListener('click', e => e.stopImmediatePropagation(), { once: true });
+        console.log(`🔗 Converted ATC to Learn More for product ${pid || psku}`);
+      }
+    }
+  });
 }
 
 
@@ -457,7 +498,7 @@ function hidePriceIfHigh() {
     updateExtremeButtons();
     hidePriceIfHigh();
     forceLearnMoreForRestrictedSkus();
-    hideHTA3021SearchCardDetails();
+    hideSearchCardDetails(RESTRICTED_PRODUCTS);
 
     /*******************************************
      * MutationObservers for dynamically added products
@@ -475,7 +516,7 @@ function hidePriceIfHigh() {
                 updateExtremeButtons();
                 hidePriceIfHigh();
                 forceLearnMoreForRestrictedSkus();
-                hideHTA3021SearchCardDetails();
+                hideSearchCardDetails(RESTRICTED_PRODUCTS);
             }
         });
         observer.observe(facetedContainer, { childList: true, subtree: true });
@@ -495,7 +536,7 @@ function hidePriceIfHigh() {
 
            updateExtremeButtons();
            hidePriceIfHigh();
-           hideHTA3021SearchCardDetails();
+           hideSearchCardDetails(RESTRICTED_PRODUCTS);
         
         });
         observer2.observe(productGrid, { childList: true, subtree: true });
@@ -513,7 +554,7 @@ function hidePriceIfHigh() {
             setTimeout(() => {
                 updateExtremeButtons();
                 hidePriceIfHigh();
-                hideHTA3021SearchCardDetails();
+                hideSearchCardDetails(RESTRICTED_PRODUCTS);
                 console.log("updateExtremeButtons() and hidePriceIfHigh() called after Show More click.");
             }, 1500);
         });
@@ -579,7 +620,7 @@ document.addEventListener('snize:productsUpdated', () => {
     setTimeout(() => {
         console.log('⏳ Running delayed re-logic after Searchanise update');
         requestAnimationFrame(() => {
-            hideHTA3021SearchCardDetails();
+            hideSearchCardDetails(RESTRICTED_PRODUCTS);
             updateExtremeButtons();
             hidePriceIfHigh();
             forceLearnMoreForRestrictedSkus();
@@ -593,7 +634,7 @@ document.addEventListener('snize:productsUpdated', () => {
 
     const mobileSearchFixInterval = setInterval(() => {
         searchFixAttempts++;
-        hideHTA3021SearchCardDetails();
+        hideSearchCardDetails(RESTRICTED_PRODUCTS);
         updateExtremeButtons();
         hidePriceIfHigh();
         forceLearnMoreForRestrictedSkus();
@@ -751,7 +792,7 @@ function hideQuickViewPriceIfExtremeSeries() {
 
   const interval = setInterval(() => {
     attempts++;
-    hideHTA3021SearchCardDetails();
+    hideSearchCardDetails(RESTRICTED_PRODUCTS);
     console.log(`⏱ Persistent fix attempt ${attempts} for HTA3021.`);
 
     if (attempts >= maxAttempts) {

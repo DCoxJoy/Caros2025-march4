@@ -1317,3 +1317,19 @@ span.snize-price.money {
     display: none;
 }
 
+/* Prevent flash: if a card is restricted, kill price + ATC everywhere */
+.card.restricted .card-price,
+.card.restricted [data-test-info-type="price"],
+.card.restricted .price,
+.card.restricted [data-product-price-without-tax],
+.card.restricted .price-section,
+.card.restricted .price-section--withoutTax,
+.card.restricted .themevale_btnATC,
+.card.restricted .button--add-to-cart,
+.card.restricted [data-button-type="add-cart"] {
+  display: none !important;
+}
+.card.restricted .learn-more-link,
+.card.restricted .learn-more-button {
+  display: inline-flex !important;
+}
