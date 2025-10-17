@@ -18,17 +18,7 @@ jQuery(document).ready(function ($) {
     }); 
 
     var mobileBreakpoint = 991; 
-    // $('.header-menu-item-link').on('click', function (e) {
-    //     e.preventDefault();
 
-    //     if ($(window).width() <= mobileBreakpoint) { 
-    //         var $megaMenu = $(this).siblings('.joy-megmenu'); 
-    //         $('.joy-megmenu').not($megaMenu).slideUp(300); 
-    //         $megaMenu.stop(true, true).slideToggle(300); 
-    //         $('.header-menu-item').not($(this).parents('.header-menu-item')).removeClass('active'); 
-    //         $(this).parents('.header-menu-item').toggleClass('active');
-    //     }
-    // });
     
     
 });
@@ -268,6 +258,12 @@ const RESTRICTED_PRODUCTS = {
   }
 };
 
+//START of custom related products pruning function
+
+
+//END of custom related products pruning function
+
+
 /**
  * Hide price + convert ATC to Learn More for multiple products.
  * Match by product IDs and/or SKUs.
@@ -483,7 +479,41 @@ function hidePriceIfHigh() {
                     forceLearnMoreForRestrictedSkus();
                 });
             }
+
+
         });
+        
+        // --- Auto-remove restricted items from "Related Products" ---
+(function removeRestrictedFromRelated() {
+  const ids  = (RESTRICTED_PRODUCTS.ids  || []).map(String);
+  const skus = (RESTRICTED_PRODUCTS.skus || []).map(s => String(s).toUpperCase());
+
+  function prune() {
+    let removed = 0;
+    document.querySelectorAll('article.card[data-product-id], article.card[data-product-sku]').forEach(card => {
+      const pid  = (card.getAttribute('data-product-id')  || '').trim();
+      const psku = (card.getAttribute('data-product-sku') || '').trim().toUpperCase();
+      if (ids.includes(pid) || skus.includes(psku)) {
+        const slide = card.closest('.slick-slide');
+        (slide || card).remove();
+        removed++;
+      }
+    });
+    if (removed) {
+      console.log(`🧹 Related: removed ${removed} restricted item(s)`);
+      try { window.dispatchEvent(new Event('resize')); } catch(e){}
+    }
+  }
+
+  setTimeout(prune, 300);
+
+  const related = document.querySelector('.product-related, .relatedProducts, .product-recommendations');
+  if (related) {
+    const obs = new MutationObserver(() => prune());
+    obs.observe(related, { childList: true, subtree: true });
+  }
+})();
+
 
         // If you do NOT want the listing logic to run on PDP, keep this return.
         // If you want listing logic too, remove it.
