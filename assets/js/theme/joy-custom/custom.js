@@ -265,64 +265,126 @@ const RESTRICTED_PRODUCTS = {
  * - Adds "Learn More" button
  * - Triggers for restricted IDs/SKUs or Extreme series
  */
-function applyQuickViewRestrictions() {
-  const quickView = document.querySelector('.modal-body.quickView');
+function applyQuickViewRestrictions(quickViewRoot) {
+  // Accept a specific modal root (best), or fall back to the first we can find
+  const quickView =
+    quickViewRoot ||
+    document.querySelector('.modal-body.quickView, .snize-quick-look, .bc-quick-view, .quickView, [data-quickview]');
   if (!quickView) return;
 
-  quickView.style.visibility = 'hidden'; // prevent flicker
-
-  const root  = quickView.querySelector('.productView.themevale_productView');
-  const titleEl = quickView.querySelector('.productView-title');
-
-  const pid  = (root?.getAttribute('data-product-id')  || '').trim();
-  const psku = (root?.getAttribute('data-product-sku') || '').trim().toUpperCase();
-  const title = (titleEl?.textContent || '').trim();
-
+  // ---- helpers -------------------------------------------------
   const idSet  = new Set((RESTRICTED_PRODUCTS.ids  || []).map(String));
   const skuSet = new Set((RESTRICTED_PRODUCTS.skus || []).map(s => String(s).toUpperCase()));
 
-  const isRestricted =
-    (pid && idSet.has(pid)) ||
-    (psku && skuSet.has(psku)) ||
-    (RESTRICTED_PRODUCTS.skus || []).some(s => title.includes(s));
+  const getIdentity = (root) => {
+    // Prefer explicit attributes on the product root
+    const rootEl =
+      root.querySelector('.productView.themevale_productView') ||
+      root.querySelector('[data-product-id],[data-product-sku]') ||
+      root;
 
-  const productCategory = root?.getAttribute('data-product-category') || '';
-  const isExtremeSeries = productCategory.includes('Series/Extreme');
+    let pid  = (rootEl.getAttribute('data-product-id')  || '').trim();
+    let psku = (rootEl.getAttribute('data-product-sku') || '').trim().toUpperCase();
 
-  if (isRestricted || isExtremeSeries) {
-    // Hide price
-    const priceEls = quickView.querySelectorAll(
-      '.productView-price .price, .productView-price .price-section, .productView-price .price-section--withoutTax, .price.price--withoutTax'
-    );
-    priceEls.forEach(el => { el.style.display = 'none'; });
-
-    // Remove ATC/Buy Now
-    ['#form-action-addToCart', '#form-action-buyItNow'].forEach(sel => quickView.querySelector(sel)?.remove());
-
-    // Add "Learn More" (once)
-    if (!quickView.querySelector('.learn-more-button')) {
-      const dataUrl = titleEl?.getAttribute('data-url') || '';
-      const productUrl = dataUrl
-        ? (dataUrl.startsWith('http') ? dataUrl : `${window.location.origin}${dataUrl}`)
-        : window.location.origin;
-
-      const btn = document.createElement('a');
-      btn.href = productUrl;
-      btn.textContent = 'Learn More';
-      btn.className = 'button button--primary learn-more-button';
-      btn.style.display = 'inline-block';
-      btn.style.marginTop = '1rem';
-      btn.style.textAlign = 'center';
-
-      (quickView.querySelector('.productView-options, .productView-details') || quickView).appendChild(btn);
-      console.log('🔗 Quick View: Learn More button added');
+    // Fallback: dedicated SKU value element (NOT the title)
+    if (!psku) {
+      const skuEl =
+        root.querySelector('.productView-sku-value, .sku-value, [data-product-sku-value]') ||
+        Array.from(root.querySelectorAll('.productView-info-name, .productView-info-label')).find(lbl =>
+          /sku|part/i.test(lbl.textContent)
+        )?.nextElementSibling;
+      if (skuEl) psku = (skuEl.textContent || '').trim().toUpperCase();
     }
 
-    console.log(`✅ Quick View restrictions applied (${isRestricted ? 'restricted SKU/ID' : 'Extreme series'})`);
+    return { pid, psku, rootEl };
+  };
+
+  const { pid, psku, rootEl } = getIdentity(quickView);
+  const productCategory = rootEl?.getAttribute('data-product-category') || '';
+  const isExtremeSeries = productCategory.includes('Series/Extreme');
+
+  const isRestricted = (!!pid && idSet.has(pid)) || (!!psku && skuSet.has(psku)) || isExtremeSeries;
+
+  if (!isRestricted) {
+    // Not a restricted product — bail with no changes.
+    return;
   }
 
-  quickView.style.visibility = 'visible';
+  // ---- apply restrictions (safely) -----------------------------
+  const prevVis = quickView.style.visibility;
+  quickView.style.visibility = 'visible'; // ensure it's visible while we work
+
+  // 1) Hide only price rows/values (scoped, not whole blocks)
+  const priceSelectors = [
+    // common price value rows
+    '.productView-price .price',
+    '.productView-price .price-section--withoutTax',
+    '.productView-price [data-product-price-without-tax]',
+    '.price.price--withoutTax',
+    '.rrp-price--withoutTax',
+    // Searchanise / theme variants; keep scope inside price containers if present
+    '.productView-price .price-section',
+    '.productView-price [class*="price"]'
+  ];
+  quickView.querySelectorAll(priceSelectors.join(',')).forEach(el => {
+    // Hide only the value line, not parent containers
+    el.style.display = 'none';
+  });
+
+  // 2) Remove ONLY the action buttons (keep their containers/forms)
+  const atcBtn = quickView.querySelector('#form-action-addToCart, button[name="addToCart"], .button--addToCart');
+  if (atcBtn) atcBtn.remove();
+
+  const buyNowBtn = quickView.querySelector('#form-action-buyItNow, .button--buyNow');
+  if (buyNowBtn) buyNowBtn.remove();
+
+  // 3) Add "Learn More" button once, linking to PDP
+  if (!quickView.querySelector('.learn-more-button')) {
+    const titleEl = quickView.querySelector('.productView-title');
+    const dataUrl = titleEl?.getAttribute('data-url') || '';
+    const anchorUrl =
+      dataUrl
+        ? (dataUrl.startsWith('http') ? dataUrl : `${window.location.origin}${dataUrl}`)
+        : (titleEl?.querySelector('a')?.href ||
+           quickView.querySelector('.productView-title a')?.href ||
+           window.location.origin);
+
+    const learnMoreBtn = document.createElement('a');
+    learnMoreBtn.href = anchorUrl;
+    learnMoreBtn.textContent = 'Learn More';
+    learnMoreBtn.className = 'button button--primary learn-more-button';
+    learnMoreBtn.style.display = 'inline-block';
+    learnMoreBtn.style.marginTop = '1rem';
+    learnMoreBtn.style.textAlign = 'center';
+
+    // Prefer inserting near options/details (keeps images intact)
+    const insertionTarget =
+      quickView.querySelector('.productView-options') ||
+      quickView.querySelector('.productView-details') ||
+      quickView; // fallback
+    insertionTarget.appendChild(learnMoreBtn);
+  }
+
+  // 4) Late DOM guard: re-hide any price/buttons that appear after async renders
+  let tries = 0;
+  const reapply = () => {
+    tries++;
+    quickView
+      .querySelectorAll('#form-action-addToCart, button[name="addToCart"], .button--addToCart, #form-action-buyItNow, .button--buyNow')
+      .forEach(el => el.remove());
+    quickView
+      .querySelectorAll(priceSelectors.join(','))
+      .forEach(el => (el.style.display = 'none'));
+    if (tries < 6) setTimeout(reapply, 120);
+  };
+  reapply();
+
+  // 5) Ensure we never leave the modal hidden
+  quickView.style.visibility = prevVis || 'visible';
 }
+
+
+
 
 
 //END of custom related products pruning function
@@ -734,31 +796,34 @@ document.addEventListener('snize:productsUpdated', () => {
 
 
         
-        // Observe modal open
-        const modalObserver = new MutationObserver((mutations) => {
-            mutations.forEach(mutation => {
-                if (mutation.addedNodes.length) {
-                    mutation.addedNodes.forEach(node => {
-                        if (
-                            node.nodeType === 1 &&
-                            node.classList.contains('modal-body') &&
-                            node.classList.contains('quickView')
-                        ) {
-                            // Run cleanup quickly before full rendering
-                            setTimeout(() => {
-                                applyQuickViewRestrictions();
-                                requestAnimationFrame(() => applyQuickViewRestrictions());
-                                 }, 50);
-                        }
-                    });
-                }
-            });
-        });
+ // Observe modal open (handles PDP + product list Quick Views)
+const modalObserver = new MutationObserver(mutations => {
+  const SEL = [
+    '.modal-body.quickView',
+    '.quickView',
+    '.snize-quick-look',
+    '[data-reveal][id*="Quick"]',
+    '[data-quickview]',
+    '.bc-quick-view'
+  ].join(',');
 
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (node.nodeType !== 1) return;
 
+      // If the added node IS a quick-view container or contains one, handle it
+      const quickViewRoot = node.matches?.(SEL) ? node : node.querySelector?.(SEL);
+      if (!quickViewRoot) return;
 
-        
-        modalObserver.observe(document.body, { childList: true, subtree: true });
+      // Run restriction logic twice to catch late-rendered DOM elements
+      setTimeout(() => {
+        applyQuickViewRestrictions(quickViewRoot);
+        requestAnimationFrame(() => applyQuickViewRestrictions(quickViewRoot));
+      }, 50);
+    });
+  });
+});
+modalObserver.observe(document.body, { childList: true, subtree: true });
 
 
 (function persistentFixForRestrictedProducts() {
