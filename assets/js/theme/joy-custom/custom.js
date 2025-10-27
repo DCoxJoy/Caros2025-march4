@@ -259,6 +259,70 @@ const RESTRICTED_PRODUCTS = {
 };
 
 //START of custom related products pruning function
+/**
+ * Unified Quick View restriction logic:
+ * - Hides price and removes ATC / Buy Now
+ * - Adds "Learn More" button
+ * - Triggers for restricted IDs/SKUs or Extreme series
+ */
+function applyQuickViewRestrictions() {
+  const quickView = document.querySelector('.modal-body.quickView');
+  if (!quickView) return;
+
+  quickView.style.visibility = 'hidden'; // prevent flicker
+
+  const root  = quickView.querySelector('.productView.themevale_productView');
+  const titleEl = quickView.querySelector('.productView-title');
+
+  const pid  = (root?.getAttribute('data-product-id')  || '').trim();
+  const psku = (root?.getAttribute('data-product-sku') || '').trim().toUpperCase();
+  const title = (titleEl?.textContent || '').trim();
+
+  const idSet  = new Set((RESTRICTED_PRODUCTS.ids  || []).map(String));
+  const skuSet = new Set((RESTRICTED_PRODUCTS.skus || []).map(s => String(s).toUpperCase()));
+
+  const isRestricted =
+    (pid && idSet.has(pid)) ||
+    (psku && skuSet.has(psku)) ||
+    (RESTRICTED_PRODUCTS.skus || []).some(s => title.includes(s));
+
+  const productCategory = root?.getAttribute('data-product-category') || '';
+  const isExtremeSeries = productCategory.includes('Series/Extreme');
+
+  if (isRestricted || isExtremeSeries) {
+    // Hide price
+    const priceEls = quickView.querySelectorAll(
+      '.productView-price .price, .productView-price .price-section, .productView-price .price-section--withoutTax, .price.price--withoutTax'
+    );
+    priceEls.forEach(el => { el.style.display = 'none'; });
+
+    // Remove ATC/Buy Now
+    ['#form-action-addToCart', '#form-action-buyItNow'].forEach(sel => quickView.querySelector(sel)?.remove());
+
+    // Add "Learn More" (once)
+    if (!quickView.querySelector('.learn-more-button')) {
+      const dataUrl = titleEl?.getAttribute('data-url') || '';
+      const productUrl = dataUrl
+        ? (dataUrl.startsWith('http') ? dataUrl : `${window.location.origin}${dataUrl}`)
+        : window.location.origin;
+
+      const btn = document.createElement('a');
+      btn.href = productUrl;
+      btn.textContent = 'Learn More';
+      btn.className = 'button button--primary learn-more-button';
+      btn.style.display = 'inline-block';
+      btn.style.marginTop = '1rem';
+      btn.style.textAlign = 'center';
+
+      (quickView.querySelector('.productView-options, .productView-details') || quickView).appendChild(btn);
+      console.log('🔗 Quick View: Learn More button added');
+    }
+
+    console.log(`✅ Quick View restrictions applied (${isRestricted ? 'restricted SKU/ID' : 'Extreme series'})`);
+  }
+
+  quickView.style.visibility = 'visible';
+}
 
 
 //END of custom related products pruning function
@@ -600,7 +664,8 @@ function hidePriceIfHigh() {
             setTimeout(() => {
                 updateExtremeButtons();
                 hidePriceIfHigh();
-                hideHTA3021SearchCardDetails(); 
+               hideSearchCardDetails(RESTRICTED_PRODUCTS);
+ 
             }, 2000);
         }
     });
@@ -620,7 +685,8 @@ function hidePriceIfHigh() {
         console.log("Window resized; re-running listing logic.");
         updateExtremeButtons();
         hidePriceIfHigh();
-        hideHTA3021SearchCardDetails(); 
+        hideSearchCardDetails(RESTRICTED_PRODUCTS);
+ 
     }, 500));
 
     window.addEventListener('orientationchange', () => {
@@ -628,23 +694,10 @@ function hidePriceIfHigh() {
         setTimeout(() => {
             updateExtremeButtons();
             hidePriceIfHigh();
-            hideHTA3021SearchCardDetails(); 
+            hideSearchCardDetails(RESTRICTED_PRODUCTS);
+ 
         }, 1000);
     });
-
-
-// document.addEventListener('snize:productsUpdated', () => {
-//   setTimeout(() => {
-//     console.log('⏳ Running delayed re-logic for HTA3021 after Searchanise update');
-//     requestAnimationFrame(() => {
-//       hideHTA3021SearchCardDetails();
-//       updateExtremeButtons();
-//       hidePriceIfHigh();
-//       forceLearnMoreForRestrictedSkus();
-//       console.log('✅ HTA3021 custom logic applied after Searchanise rendering.');
-//     });
-//   }, 1000); // Try 1500ms if Searchanise is rendering slowly
-// });
 
 
 document.addEventListener('snize:productsUpdated', () => {
@@ -680,115 +733,6 @@ document.addEventListener('snize:productsUpdated', () => {
 
 
 
-
-
-        /*******************************************
-     * 6) Hide Price in Quick View for SKU HTA3021
-     *******************************************/
-       const hideAndCleanQuickViewElementsForHTA3021 = () => {
-            const quickView = document.querySelector('.modal-body.quickView');
-            if (!quickView) return;
-        
-            // Temporarily hide the quick view modal to prevent flicker
-            quickView.style.visibility = 'hidden';
-        
-            const titleEl = quickView.querySelector('.productView-title');
-            if (!titleEl) return;
-        
-            const productName = titleEl.textContent.trim();
-        
-            if (productName.includes('iPad mini A17 Pro') || productName.includes('HTA3021')) {
-                // Remove price element
-                const priceEl = quickView.querySelector('.price.price--withoutTax');
-                if (priceEl) {
-                    priceEl.remove();
-                    console.log('✅ Quick View: Price element removed for HTA3021');
-                }
-        
-                // Remove Add to Cart button
-                const addToCartBtn = quickView.querySelector('#form-action-addToCart');
-                if (addToCartBtn) {
-                    addToCartBtn.remove();
-                    console.log('✅ Quick View: Add to Cart button removed for HTA3021');
-                }
-        
-                // Remove Buy Now button
-                const buyNowBtn = quickView.querySelector('#form-action-buyItNow');
-                if (buyNowBtn) {
-                    buyNowBtn.remove();
-                    console.log('✅ Quick View: Buy Now button removed for HTA3021');
-                }
-            }
-        
-            // Show modal content again after cleanup
-            quickView.style.visibility = 'visible';
-        };
-
-      
-
-function hideQuickViewPriceIfExtremeSeries() {
-    const quickView = document.querySelector('.modal-body.quickView');
-    if (!quickView) return;
-
-    quickView.style.visibility = 'hidden';
-
-    const rootProductEl = quickView.querySelector('.productView.themevale_productView');
-    if (!rootProductEl) {
-        quickView.style.visibility = 'visible';
-        return;
-    }
-
-    const productCategory = rootProductEl.getAttribute('data-product-category') || '';
-    const isExtremeSeries = productCategory.includes('Series/Extreme');
-
-    if (isExtremeSeries) {
-        // 💸 Hide price
-        const priceEls = quickView.querySelectorAll(
-            '.productView-price .price, .productView-price .price-section, .productView-price .price-section--withoutTax'
-        );
-        priceEls.forEach(el => {
-            el.style.display = 'none';
-            console.log('💸 Quick View: Price hidden for Extreme series');
-        });
-
-        // 🧼 Remove existing buttons
-        const atc = quickView.querySelector('#form-action-addToCart');
-        if (atc) atc.remove();
-
-        const buyNow = quickView.querySelector('#form-action-buyItNow');
-        if (buyNow) buyNow.remove();
-
-        // ❌ Avoid duplicate Learn More buttons
-        const existingLearnMore = quickView.querySelector('.learn-more-button');
-        if (!existingLearnMore) {
-            const titleEl = quickView.querySelector('.productView-title');
-            const dataUrl = titleEl?.getAttribute('data-url') || '';
-            const productUrl = dataUrl.startsWith('http') ? dataUrl : `${window.location.origin}${dataUrl}`;
-
-
-            const learnMoreBtn = document.createElement('a');
-            learnMoreBtn.href = productUrl;
-            learnMoreBtn.textContent = 'Learn More';
-            learnMoreBtn.className = 'button button--primary learn-more-button';
-            learnMoreBtn.style.display = 'inline-block';
-            learnMoreBtn.style.marginTop = '1rem';
-            learnMoreBtn.style.textAlign = 'center';
-
-            const quantityBlock = quickView.querySelector('.productView-options, .productView-details');
-            if (quantityBlock) {
-                quantityBlock.appendChild(learnMoreBtn);
-                console.log('🔗 Quick View: Learn More button added');
-            }
-        } else {
-            console.log('⚠️ Quick View: Learn More button already exists');
-        }
-    }
-
-    quickView.style.visibility = 'visible';
-}
-
-
-
         
         // Observe modal open
         const modalObserver = new MutationObserver((mutations) => {
@@ -802,9 +746,9 @@ function hideQuickViewPriceIfExtremeSeries() {
                         ) {
                             // Run cleanup quickly before full rendering
                             setTimeout(() => {
-                                hideAndCleanQuickViewElementsForHTA3021(); // Legacy SKU logic
-                                hideQuickViewPriceIfExtremeSeries(); // New custom field logic
-                                }, 50);
+                                applyQuickViewRestrictions();
+                                requestAnimationFrame(() => applyQuickViewRestrictions());
+                                 }, 50);
                         }
                     });
                 }
@@ -817,20 +761,20 @@ function hideQuickViewPriceIfExtremeSeries() {
         modalObserver.observe(document.body, { childList: true, subtree: true });
 
 
-(function persistentFixForHTA3021() {
+(function persistentFixForRestrictedProducts() {
   let attempts = 0;
   const maxAttempts = 10;
 
   const interval = setInterval(() => {
     attempts++;
     hideSearchCardDetails(RESTRICTED_PRODUCTS);
-    console.log(`⏱ Persistent fix attempt ${attempts} for HTA3021.`);
+    console.log(`⏱ Persistent fix attempt ${attempts} for restricted products.`);
 
     if (attempts >= maxAttempts) {
       clearInterval(interval);
-      console.log("✅ Persistent fix completed for HTA3021.");
+      console.log("✅ Persistent fix completed for restricted products.");
     }
-  }, 1000); // Run every second
+  }, 1000);
 })();
 
 
