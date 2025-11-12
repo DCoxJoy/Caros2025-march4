@@ -245,8 +245,8 @@ document.addEventListener("DOMContentLoaded", function () {
 //  RESTRICTED PRODUCTS CONFIG
 // ============================
 const RESTRICTED_PRODUCTS = {
-  ids: ['2160', '2163', '2166', '2055','2172','2089', '1893'], // Add/remove as needed
-  skus: ['HTA3021', 'HTA3023', 'HTA6024', 'HPA3024','CPA330S', 'CWM347MP', 'CWA657MP'], // Optional SKU match
+  ids: ['2160', '2163', '2166', '2055','2172','2089', '1893', '2171'], // Add/remove as needed
+  skus: ['HTA3021', 'HTA3023', 'HTA6024', 'HPA3024','CPA330S', 'CWM347MP', 'CWA657MP', 'HPA3224'], // Optional SKU match
   urlOverrides: {
     '2160': '/product/hta3021',
     'HTA3023': '/product/hta3023',
@@ -254,7 +254,8 @@ const RESTRICTED_PRODUCTS = {
     'HPA3024': '/product/hpa3024',
     'CPA330S': '/product/cpa330s',
     'CWM347MP': '/product/cwm347mp',
-    'CWA657MP': '/product/cwa657mp'
+    'CWA657MP': '/product/cwa657mp',
+    'HPA3224': '/product/hpa3224'
   }
 };
 
@@ -474,7 +475,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
   function forceLearnMoreForRestrictedSkus() {
-    const restrictedIDs = ['1893','2160', '2163', '2166', '2055', '2089']; // Add all product IDs here
+    const restrictedIDs = ['1893','2160', '2163', '2166', '2055', '2089', '2171']; // Add all product IDs here
 
     document.querySelectorAll('article.card[data-product-id]').forEach(card => {
         const productId = card.dataset.productId;
