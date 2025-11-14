@@ -245,8 +245,8 @@ document.addEventListener("DOMContentLoaded", function () {
 //  RESTRICTED PRODUCTS CONFIG
 // ============================
 const RESTRICTED_PRODUCTS = {
-  ids: ['2160', '2163', '2166', '2055','2172','2089', '1893', '2171'], // Add/remove as needed
-  skus: ['HTA3021', 'HTA3023', 'HTA6024', 'HPA3024','CPA330S', 'CWM347MP', 'CWA657MP', 'HPA3224'], // Optional SKU match
+  ids: ['2160', '2163', '2166', '2055','2172','2089', '1893', '2171', '1748'], // Add/remove as needed
+  skus: ['HTA3021', 'HTA3023', 'HTA6024', 'HPA3024','CPA330S', 'CWM347MP', 'CWA657MP', 'HPA3224', 'RVU101'], // Optional SKU match
   urlOverrides: {
     '2160': '/product/hta3021',
     'HTA3023': '/product/hta3023',
@@ -255,7 +255,8 @@ const RESTRICTED_PRODUCTS = {
     'CPA330S': '/product/cpa330s',
     'CWM347MP': '/product/cwm347mp',
     'CWA657MP': '/product/cwa657mp',
-    'HPA3224': '/product/hpa3224'
+    'HPA3224': '/product/hpa3224',
+    'RVU101': '/product/rvu101'
   }
 };
 
