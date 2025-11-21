@@ -18,11 +18,12 @@
 
             <div class="accordion-navigation-actions">
                 {{#if selected}}
-                    <a href="{{ remove_url }}" class="facetedSearch-clearLink" data-faceted-search-facet>{{lang 'search.faceted.clear'}}</a>
+                    <a href="{{ remove_url }}" class="facetedSearch-clearLink" data-faceted-search-facet>
+                        {{lang 'search.faceted.clear'}}
+                    </a>
                 {{/if}}
                 <img src="{{cdn 'assets/img/open.svg'}}" class="icon accordion-indicator toggleLink-text toggleLink-text--off" alt="Open Icon" />
                 <img src="{{cdn 'assets/img/close.svg'}}" class="icon accordion-indicator toggleLink-text toggleLink-text--on" alt="Close Icon" />
-
             </div>
         </div>
 
@@ -35,9 +36,18 @@
                         class="navList-action navList-action--checkbox {{#if selected }} is-selected {{/if}}"
                         rel="nofollow"
                         data-faceted-search-facet>
-                        {{{title}}}
-                        {{#if ../show_product_counts}}
-                            <span>({{ count }})</span>
+
+                        {{!-- PROMOTIONS LABEL FIX --}}
+                        {{#if (if ../title '==' 'Promotions')}}
+                            {{#if (if title '==' '1')}}
+                                Closeout
+                            {{else if (if title '==' '2')}}
+                                Clearance
+                            {{else}}
+                                {{{title}}}
+                            {{/if}}
+                        {{else}}
+                            {{{title}}}
                         {{/if}}
 
                         <span class="navList-action-close" aria-hidden="true">
@@ -52,7 +62,9 @@
 
             {{#if show_more_toggle}}
                 <a href="#facetedSearch-navList--{{hyphenate facet }}" role="button" class="toggleLink">
-                    <span class="toggleLink-text toggleLink-text--off">{{lang 'search.faceted.show-more'}}</span>
+                    <span class="toggleLink-text toggleLink-text--off">
+                        {{lang 'search.faceted.show-more'}}
+                    </span>
                 </a>
             {{/if}}
         </div>
