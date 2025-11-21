@@ -1,5 +1,10 @@
 {{#if items}}
-    {{#or ( if title '==' 'Brand') ( if title '==' 'Device Type' ) ( if title '==' 'Industry')}} 
+    {{#or 
+        ( if title '==' 'Brand') 
+        ( if title '==' 'Device Type' ) 
+        ( if title '==' 'Industry')
+        (if title '==' 'Promotions')
+    }} 
     <div class="accordion-block sidebarBlock">
         <div
             class="accordion-navigation toggleLink"
