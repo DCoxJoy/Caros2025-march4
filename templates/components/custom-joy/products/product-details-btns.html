@@ -57,7 +57,7 @@
 
                         <div class="product-details-btn">
                             <a class="custom-joy-btn transparent-btn" 
-                               href="https://thejoyfactory.com/wp-content/uploads/2025/11/datasheet-CWM347MP-2025.pdf" 
+                               href="https://thejoyfactory.com/wp-content/uploads/2025/12/datasheet-CWM347MP-2025.pdf" 
                                target="_blank" 
                                rel="noopener">
                                Product Sheet
@@ -77,38 +77,54 @@
                             </div>
 
                         {{else}}
+                            {{!-- NEW BLOCK FOR HPA3224 START --}}
+                            {{#if product.sku '===' 'HPA3224'}}
 
-                            {{!-- Everyone else → original custom_fields + fallback logic --}}
-                            {{#each product.custom_fields}}
-                                {{#if name '===' 'temp_sheet_url'}}
-                                    {{!-- Do nothing --}}
-                                {{else}}
-                                    {{#if @last}}
-                                        <div class="product-details-btn">
-                                            <a href="https://thejoyfactory.com/default-product-sheet.pdf"
-                                               id="product_sheet"
-                                               class="custom-joy-btn transparent-btn"
-                                               target="_blank"
-                                               rel="noopener">
-                                               Product Sheet
-                                            </a>
-                                        </div>
-                                    {{/if}}
-                                {{/if}}
-                            {{/each}}
-
-                            {{!-- No custom fields? Show fallback button --}}
-                            {{#unless product.custom_fields.length}}
                                 <div class="product-details-btn">
-                                    <a href="https://thejoyfactory.com/default-product-sheet.pdf"
-                                       id="product_sheet"
-                                       class="custom-joy-btn transparent-btn"
-                                       target="_blank"
+                                    <a class="custom-joy-btn transparent-btn" 
+                                       href="https://thejoyfactory.com/wp-content/uploads/2025/12/datasheet-HPA3224.pdf" 
+                                       target="_blank" 
                                        rel="noopener">
                                        Product Sheet
                                     </a>
                                 </div>
-                            {{/unless}}
+                            
+                            {{else}}
+
+                                {{!-- Everyone else → original custom_fields + fallback logic --}}
+                                {{#each product.custom_fields}}
+                                    {{#if name '===' 'temp_sheet_url'}}
+                                        {{!-- Do nothing --}}
+                                    {{else}}
+                                        {{#if @last}}
+                                            <div class="product-details-btn">
+                                                <a href="https://thejoyfactory.com/default-product-sheet.pdf"
+                                                   id="product_sheet"
+                                                   class="custom-joy-btn transparent-btn"
+                                                   target="_blank"
+                                                   rel="noopener">
+                                                   Product Sheet
+                                                </a>
+                                            </div>
+                                        {{/if}}
+                                    {{/if}}
+                                {{/each}}
+
+                                {{!-- No custom fields? Show fallback button --}}
+                                {{#unless product.custom_fields.length}}
+                                    <div class="product-details-btn">
+                                        <a href="https://thejoyfactory.com/default-product-sheet.pdf"
+                                           id="product_sheet"
+                                           class="custom-joy-btn transparent-btn"
+                                           target="_blank"
+                                           rel="noopener">
+                                           Product Sheet
+                                        </a>
+                                    </div>
+                                {{/unless}}
+                            
+                            {{/if}}
+                            {{!-- NEW BLOCK CLOSE --}}
 
                         {{/if}}
                     {{/if}}
