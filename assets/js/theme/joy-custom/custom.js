@@ -333,6 +333,22 @@ function applyQuickViewRestrictions(quickViewRoot) {
     el.style.display = 'none';
   });
 
+// --- MODIFIED SECTION 2 ---
+  // Added wallet containers to the initial removal
+  const killList = [
+    '#form-action-addToCart', 
+    'button[name="addToCart"]', 
+    '.button--addToCart',
+    '#form-action-buyItNow', 
+    '.button--buyNow',
+    '.wallet-buttons-container',        // Google/Apple Pay
+    '[data-smart-button-container]',    // PayPal
+    '.paypal-button-container',         // PayPal Generic
+    '.add-to-cart-wallet-buttons'       // "More payment options" link
+  ];
+
+
+
   // 2) Remove ONLY the action buttons (keep their containers/forms)
   const atcBtn = quickView.querySelector('#form-action-addToCart, button[name="addToCart"], .button--addToCart');
   if (atcBtn) atcBtn.remove();
@@ -371,13 +387,18 @@ function applyQuickViewRestrictions(quickViewRoot) {
   let tries = 0;
   const reapply = () => {
     tries++;
+    
+    // Specifically target wallet buttons that pop up late
     quickView
-      .querySelectorAll('#form-action-addToCart, button[name="addToCart"], .button--addToCart, #form-action-buyItNow, .button--buyNow')
+      .querySelectorAll(killList.join(','))
       .forEach(el => el.remove());
+
     quickView
       .querySelectorAll(priceSelectors.join(','))
       .forEach(el => (el.style.display = 'none'));
-    if (tries < 6) setTimeout(reapply, 120);
+    
+    // Increased tries slightly to 10 to ensure we catch the Google Pay iframe
+    if (tries < 10) setTimeout(reapply, 150); 
   };
   reapply();
 
@@ -871,3 +892,33 @@ modalObserver.observe(document.body, { childList: true, subtree: true });
   observer.observe(container, { childList: true, subtree: true });
 });
 
+/**
+ * GOOGLE PAY LOCKDOWN
+ * Specifically targets products flagged as 'is-extreme-product' in Handlebars
+ */
+document.addEventListener('DOMContentLoaded', function () {
+    const isExtreme = document.querySelector('.productView.is-extreme-product');
+
+    if (isExtreme) {
+        console.log("🚫 Extreme Product Detected: Initiating Google Pay Removal.");
+        
+        // Target all known BigCommerce Wallet/Smart Button containers
+        const walletSelectors = '.wallet-buttons-container, [data-smart-button-container], .paypal-button-container, .checkoutButtons';
+
+        // 1. Immediate Removal
+        document.querySelectorAll(walletSelectors).forEach(el => el.remove());
+
+        // 2. Persistent Check (Google Pay iframes often load 1-2 seconds late)
+        let cleanupTries = 0;
+        const cleanupInterval = setInterval(() => {
+            const buttons = document.querySelectorAll(walletSelectors);
+            if (buttons.length > 0) {
+                buttons.forEach(b => b.remove());
+                console.log("🧹 Late-loading Google Pay button removed.");
+            }
+            
+            cleanupTries++;
+            if (cleanupTries > 20) clearInterval(cleanupInterval); // Stop checking after 4 seconds
+        }, 200);
+    }
+});

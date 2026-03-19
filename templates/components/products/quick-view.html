@@ -1,3 +1,17 @@
-<div class="modal-body quickView">
+{{assignVar "isExtreme" ""}}
+{{#each product.custom_fields}}
+    {{#if name '===' 'product_status'}}
+        {{#if value '===' 'Request for Quote'}}
+            {{assignVar "isExtreme" "1"}}
+        {{/if}}
+    {{/if}}
+{{/each}}
+
+{{#or (if product.sku '===' 'HTA3021') (if product.sku '===' 'HTA6024') (if product.sku '===' 'HPA3224') (if product.sku '===' 'CWA657MP') (if product.sku '===' 'HPA3024') (if product.sku '===' 'CWA637MP-IS') (if product.sku '===' 'CWM347MP') (if product.sku '===' 'RVU101')}}
+    {{assignVar "isExtreme" "1"}}
+{{/or}}
+
+{{!-- ADD THE CLASS HERE --}}
+<div class="modal-body quickView {{#if (getVar 'isExtreme')}}is-extreme-product{{/if}}">
     {{> components/products/product-quick-view settings=../settings }}
 </div>

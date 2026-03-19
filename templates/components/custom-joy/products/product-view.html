@@ -1,12 +1,33 @@
-<div class="productView joy-productview themevale_productView" data-event-type="product" data-entity-id="{{product.id}}" data-name="{{product.title}}" data-product-category="{{#each product.category}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}" data-product-brand="{{product.brand.name}}" data-product-price="{{#if product.price.with_tax}}{{product.price.with_tax.value}}{{else}}{{product.price.without_tax.value}}{{/if}}" data-product-variant="single-product-option">
+{{!-- 1. Define the 'isExtreme' variable using strings to satisfy Stencil requirements --}}
+{{assignVar "isExtreme" ""}} 
+
+{{#each product.custom_fields}}
+    {{#if name '===' 'product_status'}}
+        {{#if value '===' 'Request for Quote'}}
+            {{assignVar "isExtreme" "1"}}
+        {{/if}}
+    {{/if}}
+{{/each}}
+
+{{#or (if product.sku '===' 'HTA3021') (if product.sku '===' 'HTA6024') (if product.sku '===' 'HPA3224') (if product.sku '===' 'CWA657MP') (if product.sku '===' 'HPA3024') (if product.sku '===' 'CWA637MP-IS') (if product.sku '===' 'CWM347MP') (if product.sku '===' 'RVU101')}}
+    {{assignVar "isExtreme" "1"}}
+{{/or}}
+
+{{!-- 2. The Modified Container (Checking if 'isExtreme' is a non-empty string) --}}
+<div class="productView joy-productview themevale_productView {{#if (getVar 'isExtreme')}}is-extreme-product{{/if}}" 
+    data-event-type="product" 
+    data-entity-id="{{product.id}}" 
+    data-name="{{product.title}}" 
+    data-product-category="{{#each product.category}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}" 
+    data-product-brand="{{product.brand.name}}" 
+    data-product-price="{{#if product.price.with_tax}}{{product.price.with_tax.value}}{{else}}{{product.price.without_tax.value}}{{/if}}" 
+    data-product-variant="single-product-option">
+    
     {{#each product.reviews.messages}}
-        {{#if error}}
-            {{> components/common/alert-error error}}
-        {{/if}}
-        {{#if success}}
-            {{> components/common/alert-success success}}
-        {{/if}}
+        {{#if error}}{{> components/common/alert-error error}}{{/if}}
+        {{#if success}}{{> components/common/alert-success success}}{{/if}}
     {{/each}}
+
     <div class="themevale_productView-left">
     
       
