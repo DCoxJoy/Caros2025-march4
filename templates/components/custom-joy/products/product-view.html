@@ -3,13 +3,15 @@
 
 {{#each product.custom_fields}}
     {{#if name '===' 'product_status'}}
+        {{!-- ONLY hide prices for Request for Quote --}}
         {{#if value '===' 'Request for Quote'}}
             {{assignVar "isExtreme" "1"}}
         {{/if}}
     {{/if}}
 {{/each}}
 
-{{#or (if product.sku '===' 'HTA3021') (if product.sku '===' 'HTA6024') (if product.sku '===' 'HPA3224') (if product.sku '===' 'CWA657MP') (if product.sku '===' 'HPA3024') (if product.sku '===' 'CWA637MP-IS') (if product.sku '===' 'CWM347MP') (if product.sku '===' 'RVU101')}}
+{{!-- Removed HTA6024, HPA3224, HPA3024, and CWM347MP so they show prices naturally --}}
+{{#or (if product.sku '===' 'HTA3021') (if product.sku '===' 'CWA657MP') (if product.sku '===' 'CWA637MP-IS') (if product.sku '===' 'RVU101')}}
     {{assignVar "isExtreme" "1"}}
 {{/or}}
 
@@ -194,8 +196,9 @@
                 </p>
   
 
-                    {{#or (if product.sku '===' 'HTA3021') (if product.sku '===' 'HTA6024') (if product.sku '===' 'HPA3224') (if product.sku '===' 'CWA657MP')(if product.sku '===' 'HPA3024')(if product.sku '===' 'CWA637MP-IS')(if product.sku '===' 'CWM347MP')(if product.sku '===' 'RVU101')}}
-                    {{!-- No price or button shown for these restricted SKUs --}}
+                   {{!-- Removed HTA6024, HPA3224, HPA3024, and CWM347MP from exclusion list --}}
+                    {{#or (if product.sku '===' 'HTA3021') (if product.sku '===' 'CWA657MP') (if product.sku '===' 'CWA637MP-IS') (if product.sku '===' 'RVU101')}}
+                    {{!-- No price or button shown for these remaining restricted SKUs --}}
                 {{else}}
                     {{!-- Regular Call for Price Block --}}
                     {{#if product.call_for_price}}
@@ -212,8 +215,7 @@
                             {{> components/common/login-for-pricing}}
                         {{/or}}
                         {{#if theme_settings.product_soldProduct}}
-                            <!-- <div class="sold-product"></div> -->
-                        {{/if}}
+                            {{/if}}
                     </div>
                 {{/or}}
 
@@ -295,111 +297,72 @@
                 {{/if}}
 
 
-                {{assignVar "productStatus" "Active"}}
-                {{#if product.custom_fields}}
-                  {{#each product.custom_fields}}
-                    {{#if name '===' 'product_status'}}
-                     {{assignVar "productStatus" value}}
-                    {{/if}}
-                   {{/each}}
+                {{!-- Set up tracking variables --}}
+{{assignVar "productStatus" "Active"}}
+{{#if product.custom_fields}}
+  {{#each product.custom_fields}}
+    {{#if name '===' 'product_status'}}
+     {{assignVar "productStatus" value}}
+    {{/if}}
+   {{/each}}
+{{/if}}
+
+{{!-- 1. STANDARD PURCHASE FLOW (Unwrapped Natively)
+     Renders clean inline buttons for Active or Pre-Order items --}}
+{{#or (if (getVar "productStatus") '===' 'Active') (if (getVar "productStatus") '===' 'Pre-Order')}}
+    {{#if product.options}}
+        {{> components/products/add-to-cart}}
+    {{else}}
+        {{#if product.can_purchase}}
+            {{> components/products/add-to-cart}}
+        {{/if}}
+        {{#if product.out_of_stock}}
+            <div class="form-action {{#unless product.options}}form-action-2{{/unless}}">
+                {{#if product.out_of_stock_message}}
+                    <div class="button" disabled>{{{product.out_of_stock_message}}}</div>
+                {{else}}
+                    <div class="button" disabled>{{lang 'products.sold_out'}}</div>
                 {{/if}}
+            </div>
+        {{/if}}
+    {{/if}}
+{{/or}}
+    
+{{!-- 2. ALTERNATIVE SYSTEM STATUSES --}}
+{{#if (getVar "productStatus") '===' 'Coming Soon'}}
+    <a href="javascript:void(0);" class="button button--secondary coming-soon-button" disabled>
+        Coming Soon
+    </a>
+{{/if}}
 
+{{#if (getVar "productStatus") '===' 'Inactive'}}
+    <div class="inactive-message">
+        <p><strong>Note:</strong> This product is currently inactive and unavailable.</p>
+    </div>
+{{/if}}
 
-                {{#unless (if (getVar "productStatus") '===' 'Request for Quote')}}
+{{#if (getVar "productStatus") '===' 'Out of Stock'}}
+    <div class="out-of-stock-message">
+        <p><strong>Note:</strong> This product is currently out of stock.</p>
+    </div>
+{{/if}}
 
-                                {{#if product.options}}
-                                        {{> components/products/add-to-cart}}
-                                    {{else}}
-                                        {{#if product.can_purchase}}
-                                            {{> components/products/add-to-cart}}
-                                        {{/if}}
-                                        {{#if product.out_of_stock}}
-                                            <div class="form-action {{#unless product.options}}form-action-2{{/unless}}">
-                                                {{#if product.out_of_stock_message}}
-                                                    <div class="button" disabled>{{{product.out_of_stock_message}}}</div>
-                                                {{else}}
-                                                    <div class="button" disabled>{{lang 'products.sold_out'}}</div>
-                                                {{/if}}
-                                            </div>
-                                        {{/if}}
-                                    {{/if}}
-                                {{/unless}}
-                                    
-                                   
+{{#if (getVar "productStatus") '===' 'Discontinued'}}
+    <div class="discontinued-message">
+        <p><strong>Note:</strong> This product has been discontinued.</p>
+    </div>
+{{/if}}
 
-                                {{!-- Show Add to Cart & Buy Now for "Active" --}}
-                                {{#if productStatus '===' 'Active'}}
-                                <div class="joy_product_actions_btns_wrapper">
-                                    {{#if product.options}}
-                                        {{> components/products/add-to-cart}}
-                                    {{else}}
-                                        {{#if product.can_purchase}}
-                                            {{> components/products/add-to-cart}}
-                                        {{/if}}
-                                        {{#if product.out_of_stock}}
-                                            <div class="form-action {{#unless product.options}}form-action-2{{/unless}}">
-                                                {{#if product.out_of_stock_message}}
-                                                    <div class="button" disabled>{{{product.out_of_stock_message}}}</div>
-                                                {{else}}
-                                                    <div class="button" disabled>{{lang 'products.sold_out'}}</div>
-                                                {{/if}}
-                                            </div>
-                                        {{/if}}
-                                    {{/if}}
-                                </div>
-                            {{/if}}
-                            {{#if productStatus '===' 'Pre-Order'}}
-                            <div class="joy_product_actions_btns_wrapper">
-                                {{#if product.options}}
-                                    {{> components/products/add-to-cart}}
-                                {{else}}
-                                    {{#if product.can_purchase}}
-                                        {{> components/products/add-to-cart}}
-                                    {{/if}}
-                                    {{#if product.out_of_stock}}
-                                        <div class="form-action {{#unless product.options}}form-action-2{{/unless}}">
-                                            {{#if product.out_of_stock_message}}
-                                                <div class="button" disabled>{{{product.out_of_stock_message}}}</div>
-                                            {{else}}
-                                                <div class="button" disabled>{{lang 'products.sold_out'}}</div>
-                                            {{/if}}
-                                        </div>
-                                    {{/if}}
-                                {{/if}}
-                            </div>
-                        {{/if}}
-                        {{#if (getVar "productStatus")}}
-                            {{#if (getVar "productStatus") '===' 'Coming Soon'}}
-                                <a href="javascript:void(0);" class="button button--secondary coming-soon-button" disabled>
-                                    Coming Soon
-                                </a>
-                            {{/if}}
-                        {{/if}}
-                        {{#if (getVar "productStatus") '===' 'Inactive'}}
-                            <div class="inactive-message">
-                                <p><strong>Note:</strong> This product is currently inactive and unavailable.</p>
-                            </div>
-                        {{/if}}
-                        {{#if (getVar "productStatus") '===' 'Out of Stock'}}
-                            <div class="out-of-stock-message">
-                                <p><strong>Note:</strong> This product is currently out of stock.</p>
-                            </div>
-                        {{/if}}
-                        {{#if (getVar "productStatus") '===' 'Discontinued'}}
-                            <div class="discontinued-message">
-                                <p><strong>Note:</strong> This product has been discontinued.</p>
-                            </div>
-                        {{/if}}
-                        {{#if (getVar "productStatus") '===' 'Request for Quote'}}
-                        <a href="/request-for-quote/?message=I%20am%20interested%20in%20a%20quote%20for%20{{getVar "productTitle"}}%20(SKU:%20{{getVar "productSku"}}),%20please%20contact%20me"
-                        class="button button--primary request-quote-button">
-                        Request a Quote</a>
-                        {{/if}}
-                        
-                        
-                              
+{{#if (getVar "productStatus") '===' 'Request for Quote'}}
+    <a href="/request-for-quote/?message=I%20am%20interested%20in%20a%20quote%20for%20{{getVar "productTitle"}}%20(SKU:%20{{getVar "productSku"}}),%20please%20contact%20me"
+       class="button button--primary request-quote-button">
+        Request a Quote
+    </a>
+{{/if}}
 
-                </form> 
+{{!-- Contact Sales - Intentionally blank to completely bypass and hide all payment button partials --}}
+
+</form>
             </div>
 
             {{> components/custom-joy/products/product-details-btns}}
