@@ -18,8 +18,6 @@ jQuery(document).ready(function ($) {
     }); 
 
     var mobileBreakpoint = 991; 
-
-    
     
 });
 
@@ -71,15 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-
-    
-
-
-
 });
-
-
-
 
 
 jQuery(document).ready(function ($) { 
@@ -91,7 +81,6 @@ jQuery(document).ready(function ($) {
         $('html').toggleClass('html-search-active');
     });
 });
-
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -117,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
 
-  document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const applyPaginationLogic = () => {
         if (window.innerWidth > 768) {
             const paginationItems = document.querySelectorAll('.pagination-item');
@@ -151,12 +140,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // // Initial check on page load
-    // applyPaginationLogic();
-
-    // Optionally, reapply logic on window resize
     window.addEventListener('resize', applyPaginationLogic);
 });
+
 // Character not enter 
 document.addEventListener('DOMContentLoaded', function () {
     const inputs = document.querySelectorAll('.form-input--incrementTotal');
@@ -175,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
 jQuery(document).ready(function ($) {
     $(window).on('scroll', function () {
         if ($(this).scrollTop() > 0) {
@@ -184,41 +171,36 @@ jQuery(document).ready(function ($) {
         }
     });
 });
+
 // Quick view btn
 document.addEventListener('DOMContentLoaded', function () {
-    // Function to add event listeners to inputs inside the modal
     function addNumericValidationToModalInputs() {
         const inputs = document.querySelectorAll('.form-input--incrementTotal');
 
         inputs.forEach(input => {
-            // Prevent non-numeric characters from being entered
             input.addEventListener('keydown', function (e) {
-                // Allow only numeric characters, backspace, and arrow keys
                 if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                    e.preventDefault(); // Prevent the key from being typed
+                    e.preventDefault();
                 }
             });
 
-            // Remove any non-numeric characters after the input
             input.addEventListener('input', function () {
-                this.value = this.value.replace(/[^0-9]/g, ''); // Remove everything except digits
+                this.value = this.value.replace(/[^0-9]/g, '');
             });
         });
     }
 
-    // Check if modal is displayed, and add event listeners for inputs inside the modal
-    const modal = document.querySelector('.your-modal-class'); // Replace with your modal's class or ID
+    const modal = document.querySelector('.your-modal-class');
 
     if (modal && modal.classList.contains('is-open')) {
-        addNumericValidationToModalInputs(); // Add input validation when modal is open
+        addNumericValidationToModalInputs();
     }
 
-    // If modal is opened dynamically, listen for modal open event
     document.body.addEventListener('click', function (e) {
-        if (e.target.closest('.open-modal-button')) { // Adjust based on your modal trigger element
+        if (e.target.closest('.open-modal-button')) {
             setTimeout(() => {
-                addNumericValidationToModalInputs(); // Add input validation after modal is opened
-            }, 500); // Delay to ensure modal is fully opened
+                addNumericValidationToModalInputs();
+            }, 500);
         }
     });
 });
@@ -226,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener("DOMContentLoaded", function () {
     const baseURL = window.location.origin;
 
-    // Check for the link every 100 milliseconds until it's found
     const checkLinkInterval = setInterval(function () {
         const createAccountLink = Array.from(document.querySelectorAll("a")).find(link =>
             link.textContent.trim() === "Create an account"
@@ -235,18 +216,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (createAccountLink) {
             createAccountLink.href = `${baseURL}/login.php?action=create_account`;
             console.log("Link updated: ", createAccountLink.href);
-            clearInterval(checkLinkInterval);  // Stop checking once the link is found
+            clearInterval(checkLinkInterval);
         }
     }, 100);
 });
 
-
-// ============================
-//  RESTRICTED PRODUCTS CONFIG
-// ============================
+// =================================================================
+//  RESTRICTED PRODUCTS & MSRP CONFIGURATION (CLEAN UNIFIED ENGINE)
+// =================================================================
 const RESTRICTED_PRODUCTS = {
-  ids: ['2160', '2163', '2166', '2055','2172','2089', '1893', '2171', '1748'], // Add/remove as needed
-  skus: ['HTA3021', 'HTA3023', 'HTA6024', 'HPA3024','CPA330S', 'CWM347MP', 'CWA657MP', 'HPA3224', 'RVU101'], // Optional SKU match
+  ids: ['2160', '2163', '2166', '2055','2172','2089', '1893', '2171', '1748'], 
+  skus: ['HTA3021', 'HTA3023', 'HTA6024', 'HPA3024','CPA330S', 'CWM347MP', 'CWA657MP', 'HPA3224', 'RVU101'], 
   urlOverrides: {
     '2160': '/product/hta3021',
     'HTA3023': '/product/hta3023',
@@ -260,26 +240,22 @@ const RESTRICTED_PRODUCTS = {
   }
 };
 
-//START of custom related products pruning function
+const MSRP_EXCEPTIONS = ['HPA3224', 'HPA3024', 'HTA6024', 'CWM347MP'];
+
+
 /**
- * Unified Quick View restriction logic:
- * - Hides price and removes ATC / Buy Now
- * - Adds "Learn More" button
- * - Triggers for restricted IDs/SKUs or Extreme series
+ * Unified Quick View restriction logic
  */
 function applyQuickViewRestrictions(quickViewRoot) {
-  // Accept a specific modal root (best), or fall back to the first we can find
   const quickView =
     quickViewRoot ||
     document.querySelector('.modal-body.quickView, .snize-quick-look, .bc-quick-view, .quickView, [data-quickview]');
   if (!quickView) return;
 
-  // ---- helpers -------------------------------------------------
   const idSet  = new Set((RESTRICTED_PRODUCTS.ids  || []).map(String));
   const skuSet = new Set((RESTRICTED_PRODUCTS.skus || []).map(s => String(s).toUpperCase()));
 
   const getIdentity = (root) => {
-    // Prefer explicit attributes on the product root
     const rootEl =
       root.querySelector('.productView.themevale_productView') ||
       root.querySelector('[data-product-id],[data-product-sku]') ||
@@ -288,7 +264,6 @@ function applyQuickViewRestrictions(quickViewRoot) {
     let pid  = (rootEl.getAttribute('data-product-id')  || '').trim();
     let psku = (rootEl.getAttribute('data-product-sku') || '').trim().toUpperCase();
 
-    // Fallback: dedicated SKU value element (NOT the title)
     if (!psku) {
       const skuEl =
         root.querySelector('.productView-sku-value, .sku-value, [data-product-sku-value]') ||
@@ -308,55 +283,48 @@ function applyQuickViewRestrictions(quickViewRoot) {
   const isRestricted = (!!pid && idSet.has(pid)) || (!!psku && skuSet.has(psku)) || isExtremeSeries;
 
   if (!isRestricted) {
-    // Not a restricted product — bail with no changes.
     return;
   }
 
-  // ---- apply restrictions (safely) -----------------------------
   const prevVis = quickView.style.visibility;
-  quickView.style.visibility = 'visible'; // ensure it's visible while we work
+  quickView.style.visibility = 'visible'; 
 
-  // 1) Hide only price rows/values (scoped, not whole blocks)
   const priceSelectors = [
-    // common price value rows
     '.productView-price .price',
     '.productView-price .price-section--withoutTax',
     '.productView-price [data-product-price-without-tax]',
     '.price.price--withoutTax',
     '.rrp-price--withoutTax',
-    // Searchanise / theme variants; keep scope inside price containers if present
     '.productView-price .price-section',
     '.productView-price [class*="price"]'
   ];
+
   quickView.querySelectorAll(priceSelectors.join(',')).forEach(el => {
-    // Hide only the value line, not parent containers
-    el.style.display = 'none';
+    if (MSRP_EXCEPTIONS.includes(psku)) {
+        el.style.setProperty('display', 'block', 'important');
+    } else {
+        el.style.display = 'none';
+    }
   });
 
-// --- MODIFIED SECTION 2 ---
-  // Added wallet containers to the initial removal
   const killList = [
     '#form-action-addToCart', 
     'button[name="addToCart"]', 
     '.button--addToCart',
     '#form-action-buyItNow', 
     '.button--buyNow',
-    '.wallet-buttons-container',        // Google/Apple Pay
-    '[data-smart-button-container]',    // PayPal
-    '.paypal-button-container',         // PayPal Generic
-    '.add-to-cart-wallet-buttons'       // "More payment options" link
+    '.wallet-buttons-container',        
+    '[data-smart-button-container]',    
+    '.paypal-button-container',         
+    '.add-to-cart-wallet-buttons'       
   ];
 
-
-
-  // 2) Remove ONLY the action buttons (keep their containers/forms)
   const atcBtn = quickView.querySelector('#form-action-addToCart, button[name="addToCart"], .button--addToCart');
   if (atcBtn) atcBtn.remove();
 
   const buyNowBtn = quickView.querySelector('#form-action-buyItNow, .button--buyNow');
   if (buyNowBtn) buyNowBtn.remove();
 
-  // 3) Add "Learn More" button once, linking to PDP
   if (!quickView.querySelector('.learn-more-button')) {
     const titleEl = quickView.querySelector('.productView-title');
     const dataUrl = titleEl?.getAttribute('data-url') || '';
@@ -375,60 +343,57 @@ function applyQuickViewRestrictions(quickViewRoot) {
     learnMoreBtn.style.marginTop = '1rem';
     learnMoreBtn.style.textAlign = 'center';
 
-    // Prefer inserting near options/details (keeps images intact)
     const insertionTarget =
       quickView.querySelector('.productView-options') ||
       quickView.querySelector('.productView-details') ||
-      quickView; // fallback
+      quickView; 
     insertionTarget.appendChild(learnMoreBtn);
   }
 
-  // 4) Late DOM guard: re-hide any price/buttons that appear after async renders
   let tries = 0;
   const reapply = () => {
     tries++;
     
-    // Specifically target wallet buttons that pop up late
     quickView
       .querySelectorAll(killList.join(','))
       .forEach(el => el.remove());
 
     quickView
       .querySelectorAll(priceSelectors.join(','))
-      .forEach(el => (el.style.display = 'none'));
+      .forEach(el => {
+        if (MSRP_EXCEPTIONS.includes(psku)) {
+            el.style.setProperty('display', 'block', 'important');
+        } else {
+            el.style.display = 'none';
+        }
+      });
     
-    // Increased tries slightly to 10 to ensure we catch the Google Pay iframe
     if (tries < 10) setTimeout(reapply, 150); 
   };
   reapply();
 
-  // 5) Ensure we never leave the modal hidden
   quickView.style.visibility = prevVis || 'visible';
 }
 
 
-
-
-
-//END of custom related products pruning function
-
-
 /**
  * Hide price + convert ATC to Learn More for multiple products.
- * Match by product IDs and/or SKUs.
  */
 function hideSearchCardDetails(cfg = {}) {
   const idSet   = new Set((cfg.ids  || []).map(String));
   const skuSet  = new Set((cfg.skus || []).map(String).map(s => s.toUpperCase()));
   const urlMap  = cfg.urlOverrides || {};
 
-  const cards = document.querySelectorAll('article.card[data-product-id], article.card[data-product-sku]');
+  const cards = document.querySelectorAll('article.card');
 
   cards.forEach(card => {
     const pid = (card.getAttribute('data-product-id') || '').trim();
-    const psku = (card.getAttribute('data-product-sku') || '').trim().toUpperCase();
+    
+    const cardText = card.textContent || "";
+    const skuMatch = cardText.match(/SKU:\s*([A-Z0-9_-]+)/i);
+    const psku = skuMatch ? skuMatch[1].toUpperCase() : "";
 
-    const isTarget = (pid && idSet.has(pid)) || (psku && skuSet.has(psku));
+    const isTarget = (pid && idSet.has(pid)) || (psku && skuSet.has(psku)) || card.getAttribute('data-is-extreme') === "true";
     if (!isTarget) return;
 
     card.classList.add('restricted');
@@ -436,11 +401,31 @@ function hideSearchCardDetails(cfg = {}) {
     const priceEl =
       card.querySelector('.card-price[data-test-info-type="price"]') ||
       card.querySelector('.price.price--withoutTax') ||
-      card.querySelector('[data-product-price-without-tax]');
+      card.querySelector('[data-product-price-without-tax]') ||
+      card.querySelector('.price-section');
 
-    if (priceEl && priceEl.style.display !== 'none') {
-      priceEl.style.display = 'none';
-      console.log(`💸 Price hidden for product ${pid || psku}`);
+    if (priceEl) {
+      if (MSRP_EXCEPTIONS.includes(psku)) {
+        if (priceEl.querySelector('.msrp-clean-display')) return;
+
+        const rawPrice = card.getAttribute('data-product-price');
+        if (rawPrice) {
+            priceEl.style.setProperty('display', 'block', 'important');
+            priceEl.style.setProperty('visibility', 'visible', 'important');
+            priceEl.classList.remove('hidden', 'u-hiddenVisually', 'hide');
+
+            const formattedPrice = '$' + parseFloat(rawPrice).toFixed(2);
+            priceEl.innerHTML = `
+                <div class="price-section msrp-clean-display" style="display: block !important; margin-bottom: 5px;">
+                    <span class="price" style="display: inline-block !important; text-decoration: none !important; color: #000 !important; font-weight: bold;">
+                        ${formattedPrice}
+                    </span>
+                </div>`;
+            console.log(`🏷️ Price clean-injected via SearchCard details for: ${psku}`);
+        }
+      } else {
+        priceEl.style.display = 'none';
+      }
     }
 
     const atcBtn = card.querySelector('a.themevale_btnATC, a.learn-more-link');
@@ -457,51 +442,42 @@ function hideSearchCardDetails(cfg = {}) {
         atcBtn.classList.remove('themevale_btnATC');
         atcBtn.classList.add('learn-more-link');
         atcBtn.addEventListener('click', e => e.stopImmediatePropagation(), { once: true });
-        console.log(`🔗 Converted ATC to Learn More for product ${pid || psku}`);
       }
     }
   });
 }
 
 
+function updateExtremeButtons() {
+    const extremeCards = document.querySelectorAll('article.card[data-is-extreme="true"]');
+    extremeCards.forEach(card => {
+        const productLinkEl = card.querySelector('.product_img_link');
+        if (!productLinkEl) return;
+        const productUrl = productLinkEl.href;
 
-document.addEventListener("DOMContentLoaded", function() {
-
-
-    /*******************************************
-     * Utility Functions: updateExtremeButtons & hidePriceIfHigh
-     *******************************************/
-    /**
-     * updateExtremeButtons():
-     * Finds article.card[data-is-extreme="true"] and converts "Add to Cart" to "Learn More."
-     */
-    function updateExtremeButtons() {
-        const extremeCards = document.querySelectorAll('article.card[data-is-extreme="true"]');
-        extremeCards.forEach(card => {
-            const productLinkEl = card.querySelector('.product_img_link');
-            if (!productLinkEl) return;
-            const productUrl = productLinkEl.href;
-
-            // Any .themevale_btnATC inside this card
-            const atcButtons = card.querySelectorAll('.themevale_btnATC');
-            atcButtons.forEach(button => {
-                button.textContent = 'Learn More';
-                button.href = productUrl;
-                button.removeAttribute('data-product-id');
-                button.classList.remove('themevale_btnATC');
-                button.addEventListener('click', e => e.stopImmediatePropagation());
-            });
+        const atcButtons = card.querySelectorAll('.themevale_btnATC');
+        atcButtons.forEach(button => {
+            button.textContent = 'Learn More';
+            button.href = productUrl;
+            button.removeAttribute('data-product-id');
+            button.classList.remove('themevale_btnATC');
+            button.addEventListener('click', e => e.stopImmediatePropagation());
         });
-        console.log("updateExtremeButtons() executed.");
-    }
+    });
+    console.log("updateExtremeButtons() executed.");
+}
 
+function forceLearnMoreForRestrictedSkus() {
+    const restrictedIDs = ['1893','2160', '2163', '2166', '2055', '2089', '2171']; 
 
-  function forceLearnMoreForRestrictedSkus() {
-    const restrictedIDs = ['1893','2160', '2163', '2166', '2055', '2089', '2171']; // Add all product IDs here
-
-    document.querySelectorAll('article.card[data-product-id]').forEach(card => {
+    document.querySelectorAll('article.card').forEach(card => {
         const productId = card.dataset.productId;
-        if (!restrictedIDs.includes(productId)) return;
+        
+        const cardText = card.textContent || "";
+        const skuMatch = cardText.match(/SKU:\s*([A-Z0-9_-]+)/i);
+        const psku = skuMatch ? skuMatch[1].toUpperCase() : "";
+        
+        if (!restrictedIDs.includes(productId) && !MSRP_EXCEPTIONS.includes(psku)) return;
 
         const productUrl = card.querySelector('.product_img_link')?.href || '#';
 
@@ -513,30 +489,42 @@ document.addEventListener("DOMContentLoaded", function() {
             atcButton.classList.remove('themevale_btnATC');
             atcButton.classList.add('learn-more-link');
             atcButton.addEventListener('click', e => e.stopImmediatePropagation());
-            console.log(`🔁 Product ${productId}: Converted to Learn More`);
         }
 
-        const priceEl = card.querySelector('.price.price--withoutTax, .card-price[data-test-info-type="price"]');
+        const priceEl = card.querySelector('.price.price--withoutTax, .card-price[data-test-info-type="price"], .price-section');
+        
         if (priceEl) {
-            priceEl.style.display = 'none';
-            console.log(`💸 Product ${productId}: Price hidden`);
+            if (MSRP_EXCEPTIONS.includes(psku)) {
+                if (priceEl.querySelector('.msrp-clean-display')) return;
+
+                const rawPrice = card.getAttribute('data-product-price');
+                if (rawPrice) {
+                    priceEl.style.setProperty('display', 'block', 'important');
+                    priceEl.style.setProperty('visibility', 'visible', 'important');
+                    priceEl.classList.remove('hidden', 'u-hiddenVisually', 'hide');
+
+                    const formattedPrice = '$' + parseFloat(rawPrice).toFixed(2);
+                    priceEl.innerHTML = `
+                        <div class="price-section msrp-clean-display" style="display: block !important; margin-bottom: 5px;">
+                            <span class="price" style="display: inline-block !important; text-decoration: none !important; color: #000 !important; font-weight: bold;">
+                                ${formattedPrice}
+                            </span>
+                        </div>`;
+                    console.log(`🏷️ Price clean-injected via forceLearnMore for: ${psku}`);
+                }
+            } else {
+                priceEl.style.display = 'none';
+            }
         }
     });
 }
-  
-
-
 
 function hidePriceIfHigh() {
     const priceElements = document.querySelectorAll('.card-price[data-test-info-type="price"]');
     priceElements.forEach(elem => {
         let priceText = elem.textContent.trim();
-
-        // Updated: Strip out everything except digits, dots, and commas. Then remove commas for parsing
         const cleaned = priceText.replace(/[^0-9.,]/g, '').replace(/,/g, '');
         let numericPrice = parseFloat(cleaned);
-
-        console.log("Raw price text:", priceText, "Cleaned:", cleaned, "Parsed:", numericPrice);
 
         if (!isNaN(numericPrice) && numericPrice >= 2599) {
             elem.style.display = 'none';
@@ -546,8 +534,7 @@ function hidePriceIfHigh() {
 }
 
 
-
-
+document.addEventListener("DOMContentLoaded", function() {
 
     /*******************************************
      * 1) PDP Logic (for product detail pages)
@@ -556,14 +543,12 @@ function hidePriceIfHigh() {
     if (pdpIndicator) {
         console.log("PDP detected via .productView-details; running PDP logic.");
 
-        // Force product_sheet button to display if it exists.
         const productSheetButton = document.querySelector("#product_sheet");
         if (productSheetButton) {
             productSheetButton.style.display = "block";
             console.log("Forcing #product_sheet button to display on PDP.");
         }
 
-        // Special status handling on PDP
         const requestQuoteBtn = document.querySelector(".request-quote-button");
         const comingSoonBtn = document.querySelector(".coming-soon-button");
         const discontinuedMsg = document.querySelector(".discontinued-message");
@@ -571,102 +556,62 @@ function hidePriceIfHigh() {
         if (requestQuoteBtn || discontinuedMsg) {
             const addToCartBtn = document.querySelector("#form-action-addToCart");
             const buyItNowBtn = document.querySelector("#form-action-buyItNow");
-            if (addToCartBtn) {
-                addToCartBtn.style.display = "none";
-                console.log("Hiding Add to Cart on PDP (Request a Quote or Discontinued).");
-            }
-            if (buyItNowBtn) {
-                buyItNowBtn.style.display = "none";
-                console.log("Hiding Buy It Now on PDP (Request a Quote or Discontinued).");
-            }
+            if (addToCartBtn) addToCartBtn.style.display = "none";
+            if (buyItNowBtn) buyItNowBtn.style.display = "none";
         } else if (comingSoonBtn) {
             const addToCartBtn = document.querySelector("#form-action-addToCart");
             const buyItNowBtn = document.querySelector("#form-action-buyItNow");
-            if (addToCartBtn) {
-                addToCartBtn.style.display = "none";
-                console.log("Hiding Add to Cart on PDP (Coming Soon).");
-            }
-            if (buyItNowBtn) {
-                buyItNowBtn.style.display = "none";
-                console.log("Hiding Buy It Now on PDP (Coming Soon).");
-            }
-            if (productSheetButton) {
-                productSheetButton.style.display = "block";
-                console.log("Forcing #product_sheet button to display (Coming Soon).");
-            }
-        } else {
-            console.log("No special status detected on PDP; default buttons remain.");
+            if (addToCartBtn) addToCartBtn.style.display = "none";
+            if (buyItNowBtn) buyItNowBtn.style.display = "none";
+            if (productSheetButton) productSheetButton.style.display = "block";
         }
 
-        /**
-         * 2) Recommended Products Carousel Logic (on PDP)
-         * 
-         * If your theme already initializes slick for .product-related .carousel-content,
-         * remove the .slick() call below. Otherwise, uncomment to init.
-         */
         jQuery(document).ready(function($) {
             const $relatedCarousel = $('.product-related .carousel-content');
             if ($relatedCarousel.length) {
-                // Uncomment if your theme does NOT initialize slick for this carousel
-                // $relatedCarousel.slick({
-                //     slidesToShow: 4,
-                //     slidesToScroll: 1,
-                //     infinite: false,
-                //     arrows: true,
-                //     dots: true
-                // });
-
-                // Run your logic right away for initially visible slides
                 updateExtremeButtons();
                 hidePriceIfHigh();
              
-
-                // Re-run whenever the carousel changes slides
                 $relatedCarousel.on('init reInit afterChange', function() {
                     updateExtremeButtons();
                     hidePriceIfHigh();
                     forceLearnMoreForRestrictedSkus();
                 });
             }
-
-
         });
         
         // --- Auto-remove restricted items from "Related Products" ---
-(function removeRestrictedFromRelated() {
-  const ids  = (RESTRICTED_PRODUCTS.ids  || []).map(String);
-  const skus = (RESTRICTED_PRODUCTS.skus || []).map(s => String(s).toUpperCase());
+        (function removeRestrictedFromRelated() {
+          const ids  = (RESTRICTED_PRODUCTS.ids  || []).map(String);
+          const skus = (RESTRICTED_PRODUCTS.skus || []).map(s => String(s).toUpperCase());
 
-  function prune() {
-    let removed = 0;
-    document.querySelectorAll('article.card[data-product-id], article.card[data-product-sku]').forEach(card => {
-      const pid  = (card.getAttribute('data-product-id')  || '').trim();
-      const psku = (card.getAttribute('data-product-sku') || '').trim().toUpperCase();
-      if (ids.includes(pid) || skus.includes(psku)) {
-        const slide = card.closest('.slick-slide');
-        (slide || card).remove();
-        removed++;
-      }
-    });
-    if (removed) {
-      console.log(`🧹 Related: removed ${removed} restricted item(s)`);
-      try { window.dispatchEvent(new Event('resize')); } catch(e){}
-    }
-  }
+          function prune() {
+            let removed = 0;
+            document.querySelectorAll('article.card[data-product-id], article.card[data-product-sku]').forEach(card => {
+              const pid  = (card.getAttribute('data-product-id')  || '').trim();
+              const psku = (card.getAttribute('data-product-sku') || '').trim().toUpperCase();
+              if (ids.includes(pid) || skus.includes(psku)) {
+                const slide = card.closest('.slick-slide');
+                (slide || card).remove();
+                removed++;
+              }
+            });
+            if (removed) {
+              console.log(`🧹 Related: removed ${removed} restricted item(s)`);
+              try { window.dispatchEvent(new Event('resize')); } catch(e){}
+            }
+          }
 
-  setTimeout(prune, 300);
+          setTimeout(prune, 300);
 
-  const related = document.querySelector('.product-related, .relatedProducts, .product-recommendations');
-  if (related) {
-    const obs = new MutationObserver(() => prune());
-    obs.observe(related, { childList: true, subtree: true });
-  }
-})();
+          const related = document.querySelector('.product-related, .relatedProducts, .product-recommendations');
+          if (related) {
+            const obs = new MutationObserver(() => prune());
+            obs.observe(related, { childList: true, subtree: true });
+          }
+        })();
 
-
-        // If you do NOT want the listing logic to run on PDP, keep this return.
-        // If you want listing logic too, remove it.
-        return;
+        return; 
     }
 
     /*******************************************
@@ -674,7 +619,6 @@ function hidePriceIfHigh() {
      *******************************************/
     console.log("Listing page detected; running extreme product logic.");
 
-    // Immediately run listing logic
     updateExtremeButtons();
     hidePriceIfHigh();
     forceLearnMoreForRestrictedSkus();
@@ -688,9 +632,7 @@ function hidePriceIfHigh() {
         const observer = new MutationObserver(mutations => {
             let newNodes = false;
             mutations.forEach(mutation => {
-                if (mutation.addedNodes.length > 0) {
-                    newNodes = true;
-                }
+                if (mutation.addedNodes.length > 0) newNodes = true;
             });
             if (newNodes) {
                 updateExtremeButtons();
@@ -700,28 +642,17 @@ function hidePriceIfHigh() {
             }
         });
         observer.observe(facetedContainer, { childList: true, subtree: true });
-    } else {
-        console.warn('No #faceted-search-container found. Faceted observer not set.');
     }
 
     const productGrid = document.querySelector('.productGrid');
     if (productGrid) {
         const observer2 = new MutationObserver(mutations => {
-            let newNodes = false;
-            mutations.forEach(mutation => {
-                if (mutation.addedNodes.length > 0) {
-                    newNodes = true;
-                }
-            });
-
            updateExtremeButtons();
            hidePriceIfHigh();
+           forceLearnMoreForRestrictedSkus();
            hideSearchCardDetails(RESTRICTED_PRODUCTS);
-        
         });
         observer2.observe(productGrid, { childList: true, subtree: true });
-    } else {
-        console.warn('No .productGrid found. ' + '"Show More" observer not set.');
     }
 
     /*******************************************
@@ -730,34 +661,27 @@ function hidePriceIfHigh() {
     const showMoreBtn = document.querySelector(".button--secondary.button--lg[href^='javascript:void(0)']");
     if (showMoreBtn) {
         showMoreBtn.addEventListener("click", () => {
-            console.log("Show More button clicked...");
             setTimeout(() => {
                 updateExtremeButtons();
                 hidePriceIfHigh();
                 hideSearchCardDetails(RESTRICTED_PRODUCTS);
-                console.log("updateExtremeButtons() and hidePriceIfHigh() called after Show More click.");
             }, 1500);
         });
     }
 
     /*******************************************
-     * 5) Responsive Handling on Window Load, Resize & Orientation Change
+     * 5) Responsive Handling
      *******************************************/
     window.addEventListener("load", function() {
         if (window.innerWidth < 768) {
-            console.log("Window loaded on small screen; re-running listing logic.");
             setTimeout(() => {
                 updateExtremeButtons();
                 hidePriceIfHigh();
-               hideSearchCardDetails(RESTRICTED_PRODUCTS);
- 
+                hideSearchCardDetails(RESTRICTED_PRODUCTS);
             }, 2000);
         }
     });
 
-
-
-    // Debounce for responsive changes
     function debounce(func, wait) {
         let timeout;
         return function(...args) {
@@ -767,110 +691,90 @@ function hidePriceIfHigh() {
     }
 
     window.addEventListener('resize', debounce(() => {
-        console.log("Window resized; re-running listing logic.");
         updateExtremeButtons();
         hidePriceIfHigh();
         hideSearchCardDetails(RESTRICTED_PRODUCTS);
- 
     }, 500));
 
     window.addEventListener('orientationchange', () => {
-        console.log("Orientation changed; re-running listing logic after delay.");
         setTimeout(() => {
             updateExtremeButtons();
             hidePriceIfHigh();
             hideSearchCardDetails(RESTRICTED_PRODUCTS);
- 
         }, 1000);
     });
 
+    document.addEventListener('snize:productsUpdated', () => {
+        setTimeout(() => {
+            requestAnimationFrame(() => {
+                hideSearchCardDetails(RESTRICTED_PRODUCTS);
+                updateExtremeButtons();
+                hidePriceIfHigh();
+                forceLearnMoreForRestrictedSkus();
+            });
+        }, 1000);
 
-document.addEventListener('snize:productsUpdated', () => {
-    setTimeout(() => {
-        console.log('⏳ Running delayed re-logic after Searchanise update');
-        requestAnimationFrame(() => {
+        let searchFixAttempts = 0;
+        const maxSearchFixAttempts = 10;
+
+        const mobileSearchFixInterval = setInterval(() => {
+            searchFixAttempts++;
             hideSearchCardDetails(RESTRICTED_PRODUCTS);
             updateExtremeButtons();
             hidePriceIfHigh();
             forceLearnMoreForRestrictedSkus();
-            console.log('✅ Searchanise custom logic applied.');
-        });
-    }, 1000);
 
-    // 🧠 Persistent retry loop for mobile
-    let searchFixAttempts = 0;
-    const maxSearchFixAttempts = 10;
-
-    const mobileSearchFixInterval = setInterval(() => {
-        searchFixAttempts++;
-        hideSearchCardDetails(RESTRICTED_PRODUCTS);
-        updateExtremeButtons();
-        hidePriceIfHigh();
-        forceLearnMoreForRestrictedSkus();
-        console.log(`📱 Mobile search re-patch attempt ${searchFixAttempts}`);
-
-        if (searchFixAttempts >= maxSearchFixAttempts) {
-            clearInterval(mobileSearchFixInterval);
-            console.log("✅ Mobile search persistent fix complete.");
-        }
-    }, 1000);
-});
-
-
-
-        
- // Observe modal open (handles PDP + product list Quick Views)
-const modalObserver = new MutationObserver(mutations => {
-  const SEL = [
-    '.modal-body.quickView',
-    '.quickView',
-    '.snize-quick-look',
-    '[data-reveal][id*="Quick"]',
-    '[data-quickview]',
-    '.bc-quick-view'
-  ].join(',');
-
-  mutations.forEach(mutation => {
-    mutation.addedNodes.forEach(node => {
-      if (node.nodeType !== 1) return;
-
-      // If the added node IS a quick-view container or contains one, handle it
-      const quickViewRoot = node.matches?.(SEL) ? node : node.querySelector?.(SEL);
-      if (!quickViewRoot) return;
-
-      // Run restriction logic twice to catch late-rendered DOM elements
-      setTimeout(() => {
-        applyQuickViewRestrictions(quickViewRoot);
-        requestAnimationFrame(() => applyQuickViewRestrictions(quickViewRoot));
-      }, 50);
+            if (searchFixAttempts >= maxSearchFixAttempts) {
+                clearInterval(mobileSearchFixInterval);
+            }
+        }, 1000);
     });
-  });
+        
+    // Observe modal open (handles PDP + product list Quick Views)
+    const modalObserver = new MutationObserver(mutations => {
+      const SEL = [
+        '.modal-body.quickView',
+        '.quickView',
+        '.snize-quick-look',
+        '[data-reveal][id*="Quick"]',
+        '[data-quickview]',
+        '.bc-quick-view'
+      ].join(',');
+
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType !== 1) return;
+
+          const quickViewRoot = node.matches?.(SEL) ? node : node.querySelector?.(SEL);
+          if (!quickViewRoot) return;
+
+          setTimeout(() => {
+            applyQuickViewRestrictions(quickViewRoot);
+            requestAnimationFrame(() => applyQuickViewRestrictions(quickViewRoot));
+          }, 50);
+        });
+      });
+    });
+    modalObserver.observe(document.body, { childList: true, subtree: true });
+
+    (function persistentFixForRestrictedProducts() {
+      let attempts = 0;
+      const maxAttempts = 10;
+
+      const interval = setInterval(() => {
+        attempts++;
+        hideSearchCardDetails(RESTRICTED_PRODUCTS);
+
+        if (attempts >= maxAttempts) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    })();
+
 });
-modalObserver.observe(document.body, { childList: true, subtree: true });
 
-
-(function persistentFixForRestrictedProducts() {
-  let attempts = 0;
-  const maxAttempts = 10;
-
-  const interval = setInterval(() => {
-    attempts++;
-    hideSearchCardDetails(RESTRICTED_PRODUCTS);
-    console.log(`⏱ Persistent fix attempt ${attempts} for restricted products.`);
-
-    if (attempts >= maxAttempts) {
-      clearInterval(interval);
-      console.log("✅ Persistent fix completed for restricted products.");
-    }
-  }, 1000);
-})();
-
-
-});
-
-
-  //Following javascript code removes &quote;from product filter page
-  document.addEventListener('DOMContentLoaded', function () {
+// Removes &quote; from product filter page
+document.addEventListener('DOMContentLoaded', function () {
   const container = document.querySelector('.page');
   if (!container) return;
 
@@ -881,44 +785,33 @@ modalObserver.observe(document.body, { childList: true, subtree: true });
     }
   };
 
-  // Run once immediately in case it's already there
   cleanHeading();
 
-  // Set up observer on the container that holds the page heading
   const observer = new MutationObserver(function () {
     cleanHeading();
   });
-
   observer.observe(container, { childList: true, subtree: true });
 });
 
 /**
  * GOOGLE PAY LOCKDOWN
- * Specifically targets products flagged as 'is-extreme-product' in Handlebars
  */
 document.addEventListener('DOMContentLoaded', function () {
     const isExtreme = document.querySelector('.productView.is-extreme-product');
 
     if (isExtreme) {
-        console.log("🚫 Extreme Product Detected: Initiating Google Pay Removal.");
-        
-        // Target all known BigCommerce Wallet/Smart Button containers
         const walletSelectors = '.wallet-buttons-container, [data-smart-button-container], .paypal-button-container, .checkoutButtons';
-
-        // 1. Immediate Removal
         document.querySelectorAll(walletSelectors).forEach(el => el.remove());
 
-        // 2. Persistent Check (Google Pay iframes often load 1-2 seconds late)
         let cleanupTries = 0;
         const cleanupInterval = setInterval(() => {
             const buttons = document.querySelectorAll(walletSelectors);
             if (buttons.length > 0) {
                 buttons.forEach(b => b.remove());
-                console.log("🧹 Late-loading Google Pay button removed.");
             }
             
             cleanupTries++;
-            if (cleanupTries > 20) clearInterval(cleanupInterval); // Stop checking after 4 seconds
+            if (cleanupTries > 20) clearInterval(cleanupInterval); 
         }, 200);
     }
 });
