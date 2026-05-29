@@ -244,6 +244,23 @@ const MSRP_EXCEPTIONS = ['HPA3224', 'HPA3024', 'HTA6024', 'CWM347MP'];
 
 
 /**
+ * NEW HELPER FUNCTION: Cleans product text labels inside PDP and Quick Views
+ */
+function cleanProductDetailLabels(root = document) {
+    root.querySelectorAll('dt, div, p, span, th, strong, td').forEach(el => {
+        if (el.children.length === 0 || el.tagName === 'STRONG' || el.tagName === 'SPAN') {
+            const text = el.textContent.trim().toLowerCase();
+            if (text === 'product_status:' || text === 'product_status') {
+                el.textContent = el.textContent.includes(':') ? 'Status:' : 'Status';
+            } else if (text === 'product_type:' || text === 'product_type') {
+                el.textContent = el.textContent.includes(':') ? 'Type:' : 'Type';
+            }
+        }
+    });
+}
+
+
+/**
  * Unified Quick View restriction logic
  */
 function applyQuickViewRestrictions(quickViewRoot) {
@@ -251,6 +268,8 @@ function applyQuickViewRestrictions(quickViewRoot) {
     quickViewRoot ||
     document.querySelector('.modal-body.quickView, .snize-quick-look, .bc-quick-view, .quickView, [data-quickview]');
   if (!quickView) return;
+
+  cleanProductDetailLabels(quickView);
 
   const idSet  = new Set((RESTRICTED_PRODUCTS.ids  || []).map(String));
   const skuSet = new Set((RESTRICTED_PRODUCTS.skus || []).map(s => String(s).toUpperCase()));
@@ -299,8 +318,11 @@ function applyQuickViewRestrictions(quickViewRoot) {
     '.productView-price [class*="price"]'
   ];
 
+  // FIXED: Explicitly force hide any elements related to "saving" rows
   quickView.querySelectorAll(priceSelectors.join(',')).forEach(el => {
-    if (MSRP_EXCEPTIONS.includes(psku)) {
+    if (el.classList.contains('price-section--saving') || el.classList.contains('price--saving') || el.closest('.price-section--saving')) {
+        el.style.setProperty('display', 'none', 'important');
+    } else if (MSRP_EXCEPTIONS.includes(psku)) {
         el.style.setProperty('display', 'block', 'important');
     } else {
         el.style.display = 'none';
@@ -358,10 +380,13 @@ function applyQuickViewRestrictions(quickViewRoot) {
       .querySelectorAll(killList.join(','))
       .forEach(el => el.remove());
 
+    // FIXED: Late rendering DOM engine safety filter guard applied here too
     quickView
       .querySelectorAll(priceSelectors.join(','))
       .forEach(el => {
-        if (MSRP_EXCEPTIONS.includes(psku)) {
+        if (el.classList.contains('price-section--saving') || el.classList.contains('price--saving') || el.closest('.price-section--saving')) {
+            el.style.setProperty('display', 'none', 'important');
+        } else if (MSRP_EXCEPTIONS.includes(psku)) {
             el.style.setProperty('display', 'block', 'important');
         } else {
             el.style.display = 'none';
@@ -543,6 +568,8 @@ document.addEventListener("DOMContentLoaded", function() {
     if (pdpIndicator) {
         console.log("PDP detected via .productView-details; running PDP logic.");
 
+        cleanProductDetailLabels();
+
         const productSheetButton = document.querySelector("#product_sheet");
         if (productSheetButton) {
             productSheetButton.style.display = "block";
@@ -623,6 +650,7 @@ document.addEventListener("DOMContentLoaded", function() {
     hidePriceIfHigh();
     forceLearnMoreForRestrictedSkus();
     hideSearchCardDetails(RESTRICTED_PRODUCTS);
+    cleanProductDetailLabels();
 
     /*******************************************
      * MutationObservers for dynamically added products
@@ -639,6 +667,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 hidePriceIfHigh();
                 forceLearnMoreForRestrictedSkus();
                 hideSearchCardDetails(RESTRICTED_PRODUCTS);
+                cleanProductDetailLabels();
             }
         });
         observer.observe(facetedContainer, { childList: true, subtree: true });
@@ -651,6 +680,7 @@ document.addEventListener("DOMContentLoaded", function() {
            hidePriceIfHigh();
            forceLearnMoreForRestrictedSkus();
            hideSearchCardDetails(RESTRICTED_PRODUCTS);
+           cleanProductDetailLabels();
         });
         observer2.observe(productGrid, { childList: true, subtree: true });
     }
@@ -665,6 +695,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateExtremeButtons();
                 hidePriceIfHigh();
                 hideSearchCardDetails(RESTRICTED_PRODUCTS);
+                cleanProductDetailLabels();
             }, 1500);
         });
     }
@@ -678,6 +709,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateExtremeButtons();
                 hidePriceIfHigh();
                 hideSearchCardDetails(RESTRICTED_PRODUCTS);
+                cleanProductDetailLabels();
             }, 2000);
         }
     });
@@ -694,6 +726,7 @@ document.addEventListener("DOMContentLoaded", function() {
         updateExtremeButtons();
         hidePriceIfHigh();
         hideSearchCardDetails(RESTRICTED_PRODUCTS);
+        cleanProductDetailLabels();
     }, 500));
 
     window.addEventListener('orientationchange', () => {
@@ -701,6 +734,7 @@ document.addEventListener("DOMContentLoaded", function() {
             updateExtremeButtons();
             hidePriceIfHigh();
             hideSearchCardDetails(RESTRICTED_PRODUCTS);
+            cleanProductDetailLabels();
         }, 1000);
     });
 
@@ -711,6 +745,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateExtremeButtons();
                 hidePriceIfHigh();
                 forceLearnMoreForRestrictedSkus();
+                cleanProductDetailLabels();
             });
         }, 1000);
 
@@ -723,6 +758,7 @@ document.addEventListener("DOMContentLoaded", function() {
             updateExtremeButtons();
             hidePriceIfHigh();
             forceLearnMoreForRestrictedSkus();
+            cleanProductDetailLabels();
 
             if (searchFixAttempts >= maxSearchFixAttempts) {
                 clearInterval(mobileSearchFixInterval);
@@ -764,6 +800,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const interval = setInterval(() => {
         attempts++;
         hideSearchCardDetails(RESTRICTED_PRODUCTS);
+        cleanProductDetailLabels();
 
         if (attempts >= maxAttempts) {
           clearInterval(interval);
