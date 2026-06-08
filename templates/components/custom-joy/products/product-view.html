@@ -219,12 +219,18 @@
                     </div>
                 {{/or}}
 
-
-            
-
-
                 {{{region name="product_below_price"}}}
                 {{product.detail_messages}}
+                {{#each product.custom_fields}}
+                    {{#if name '==' 'series'}}
+                        {{#if value '==' 'Extreme'}}
+                            <div class="productView-msrp-notice">
+                                * Certified only as part of a complete device-and-case assembly. MSRP shown is for the case component only.
+                            </div>
+                        {{/if}}
+                    {{/if}}
+                {{/each}}
+           
                 <dl class="productView-info">
                     {{#if product.sku}}
                         <div class="productView-info-wrapper"> 
